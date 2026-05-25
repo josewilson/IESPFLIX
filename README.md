@@ -7,9 +7,11 @@ Projeto Spring Boot desenvolvido como parte da disciplina de Backend 1 da Uniesp
 - **Java 21** - Última versão LTS do Java
 - **Spring Boot 3.5.10** - Framework principal
 - **Spring Data JPA** - Persistência de dados
-- **H2 Database** - Banco de dados em memória para desenvolvimento
+- **H2 Database** - Banco de dados em arquivo para desenvolvimento
 - **SpringDoc OpenAPI 2.8.6** - Documentação de API
 - **Lombok 1.18.32** - Redução de código boilerplate
+- **OpenFeign** - Cliente HTTP declarativo (ViaCEP)
+- **Spring Security Crypto** - BCrypt para hash de senhas
 - **JUnit 5** - Framework de testes
 - **Mockito** - Framework para mocks em testes
 - **JaCoCo** - Análise de cobertura de testes
@@ -18,58 +20,98 @@ Projeto Spring Boot desenvolvido como parte da disciplina de Backend 1 da Uniesp
 
 ```
 src/main/java/br/uniesp/si/techback/
-├── controller/          # Camada de controle REST
-│   └── FilmeController.java
-├── service/            # Camada de lógica de negócio
-│   └── FilmeService.java
-├── repository/         # Camada de acesso a dados
-│   └── FilmeRepository.java
-├── model/             # Entidades JPA
-│   └── Filme.java
-├── dto/               # Data Transfer Objects
-│   └── FilmeDTO.java
-├── mapper/            # Conversores entre Entity e DTO
-│   └── FilmeMapper.java
+├── config/              # Beans de configuração (BCrypt, RestTemplate, Swagger)
+├── client/              # FeignClient para ViaCEP
+├── controller/          # Camada REST (9 controllers)
+├── service/             # Lógica de negócio (8 services)
+├── service/externo/     # Integrações externas (BrasilAPI)
+├── repository/          # Spring Data JPA (8 repositories)
+├── model/               # Entidades JPA (8 entidades)
+├── dto/                 # Data Transfer Objects (12 DTOs)
+├── dto/externo/         # DTOs de APIs externas
+├── mapper/              # Conversores Entity ↔ DTO (4 mappers)
+├── exception/           # GlobalExceptionHandler + CustomBeanException
+├── filter/              # CorrelationIdFilter (MDC)
+├── validation/          # Custom Bean Validator (@CpfCnpj)
 └── TechbackApplication.java
-
-src/test/java/br/uniesp/si/techback/
-├── controller/        # Testes do controller
-├── service/          # Testes do service
-├── repository/       # Testes do repository
-└── mapper/           # Testes do mapper
 ```
 
-## 🎯 Funcionalidades
+## ✅ Funcionalidades implementadas
 
-API REST para gerenciamento de filmes com as seguintes operações:
+### Usuários
+- `GET /usuarios` — listagem paginada (Page, size=10 padrão)
+- `POST /usuarios` — cadastro com validação Bean Validation + hash BCrypt
+- `GET /usuarios/{id}` — busca por ID
+- `PUT /usuarios/{id}` — atualização com validação
+- `DELETE /usuarios/{id}` — remoção (204 No Content)
 
-- **GET /filmes** - Listar todos os filmes
-- **GET /filmes/{id}** - Buscar filme por ID
-- **POST /filmes** - Criar novo filme
-- **PUT /filmes/{id}** - Atualizar filme existente
-- **DELETE /filmes/{id}** - Excluir filme
+### Conteúdos
+- `GET /conteudos` — listagem paginada (Page, size=10 padrão)
+- `POST /conteudos` — cadastro com validação
+- `GET /conteudos/{id}` — busca por ID
+- `GET /conteudos/genero/{genero}` — filtro case-insensitive por gênero (JPQL)
+- `GET /conteudos/top?n=` — top N por relevância (JPQL + Pageable)
+- `GET /conteudos/buscar?termo=` — busca em título e sinopse (JPQL LIKE)
+- `GET /conteudos/lancados-apos?ano=` — filtro por ano de lançamento (JPQL)
+- `PUT /conteudos/{id}` — atualização com validação
+- `DELETE /conteudos/{id}` — remoção (204 No Content)
 
-### Modelo de Dados
+### Filmes
+- `GET /filmes` — listagem completa
+- `GET /filmes/ordenado` — listagem ordenada por título (JPQL)
+- `GET /filmes/{id}` — busca por ID
+- `POST /filmes` — cadastro com validação
+- `PUT /filmes/{id}` — atualização com validação
+- `DELETE /filmes/{id}` — remoção (204 No Content)
 
-**FilmeDTO:**
-```json
-{
-  "id": 1,
-  "titulo": "Título do Filme",
-  "sinopse": "Sinopse do filme",
-  "dataLancamento": "2023-01-01",
-  "genero": "Ação",
-  "duracaoMinutos": 120,
-  "classificacaoIndicativa": "12 anos"
-}
-```
+### Favoritos
+- `POST /favoritos` — adicionar conteúdo aos favoritos
+- `GET /favoritos/usuario/{usuarioId}` — favoritos recentes do usuário (JPQL ORDER BY)
+- `DELETE /favoritos/{id}` — remover dos favoritos (204 No Content)
+
+### Planos
+- `GET /planos` — listagem de planos
+- `POST /planos` — criar plano
+
+### Assinaturas
+- `POST /assinaturas` — criar assinatura (valida usuário e plano)
+- `GET /assinaturas/usuario/{id}` — assinaturas do usuário
+- `PUT /assinaturas/{id}/cancelar` — cancelar assinatura
+
+### Funcionários
+- `GET /funcionarios` — listagem
+- `POST /funcionarios` — incluir com preenchimento automático de endereço via ViaCEP
+
+### Integrações Externas
+- `GET /enderecos/{cep}` — busca endereço por CEP (ViaCEP via Feign)
+- `GET /feriados/{ano}` — feriados nacionais do ano (BrasilAPI via RestTemplate)
+
+## 📊 Status do projeto
+
+Última atualização: 2026-05-19
+
+| Módulo | Status |
+|--------|--------|
+| Usuários | ✓ |
+| Conteúdos | ✓ |
+| Filmes | ✓ |
+| Favoritos | ✓ |
+| Planos e Assinaturas | ✓ |
+| Funcionários | ✓ |
+| Integrações externas (ViaCEP + BrasilAPI) | ✓ |
+| Swagger / OpenAPI | ✓ |
+| Logs e Infraestrutura (MDC, Correlation-ID) | ✓ |
+| Custom Validator (@CpfCnpj) | ✓ |
+| Tratamento global de exceções | ✓ |
+| Paginação | ✓ |
+| MetodoPagamento (Service + Controller) | ◑ |
 
 ## 🧪 Testes
 
 O projeto possui cobertura de testes abrangente:
 
 - **FilmeRepository**: 100% de cobertura
-- **FilmeService**: 80.9% de cobertura  
+- **FilmeService**: 80.9% de cobertura
 - **FilmeController**: 83.2% de cobertura
 - **FilmeMapper**: 100% de cobertura
 
@@ -89,24 +131,25 @@ mvn test jacoco:report
 ## 🏗️ Arquitetura e Boas Práticas
 
 ### Separação de Responsabilidades
-- **Controller**: Responsável por tratar requisições HTTP e validações
+- **Controller**: Trata requisições HTTP, valida entrada com `@Valid`
 - **Service**: Contém a lógica de negócio e regras do domínio
-- **Repository**: Interface para acesso e persistência de dados
-- **DTO**: Objeto de transferência de dados para API
+- **Repository**: Interface Spring Data JPA com queries JPQL customizadas
+- **DTO**: Objetos de transferência com Bean Validation
 - **Mapper**: Conversão entre entidades e DTOs
 
 ### Validação
-- Validação de dados na camada de controller usando Bean Validation
-- Título do filme é obrigatório (`@NotBlank`)
+- Bean Validation padrão: `@NotBlank`, `@Email`, `@Past`, `@Min`, `@Max`, `@DecimalMin`, `@DecimalMax`, `@Positive`, `@Size`
+- **Custom Validator**: `@CpfCnpj` — valida CPF (algoritmo de dígitos verificadores) e CNPJ
 
 ### Tratamento de Exceções
-- Logs informativos para todas as operações
-- Tratamento adequado de recursos não encontrados
-- Retorno de status HTTP apropriados
+- `@RestControllerAdvice` centralizado (`GlobalExceptionHandler`)
+- Resposta padronizada com `timestamp`, `status`, `error`, `message`, `path`
+- Cobre: 400 (validação), 400 (regra de negócio), 404, 409 (conflito), 500
 
 ### Logging
-- Logs em diferentes níveis (INFO, DEBUG, WARN, ERROR)
-- Informações contextuais para facilitar debugging
+- `@Slf4j` com níveis INFO, DEBUG, WARN, ERROR
+- **Correlation-ID** por requisição via `CorrelationIdFilter` + MDC
+- Padrão de log: `HH:mm:ss [correlationId] LEVEL logger - mensagem`
 
 ## 🚀 Como Executar
 
@@ -142,14 +185,7 @@ O console do banco H2 está disponível em:
 **Configurações de conexão:**
 - URL: `jdbc:h2:file:~/teckback20262`
 - User Name: `sa`
-- Password: `password`
-
-## 📊 Métricas de Qualidade
-
-- **Cobertura de Testes**: >80% nas camadas principais
-- **Code Quality**: Segue padrões e convenções Java
-- **Arquitetura**: Limpa, com separação clara de responsabilidades
-- **Documentação**: API auto-documentada com OpenAPI
+- Password: *(vazio)*
 
 ## 🔧 Desenvolvimento
 
@@ -168,32 +204,18 @@ mvn jacoco:report
 # Limpar projeto
 mvn clean
 
-# Empacar aplicação
+# Empacotar aplicação
 mvn package
-
-# Verificar dependências
-mvn dependency:tree
 ```
 
-### Configuração de Desenvolvimento
+## 👨‍💻 Equipe
 
-O projeto utiliza perfil de teste (`application-test.properties`) com:
-- Banco H2 em memória
-- Logs em nível DEBUG
-- Criação automática de schema
+| Nome |
+|------|
+| José Wilson Alves de Souza |
+| Ana Julya Rodrigues Dionizio |
+| Alex Júlio de Brito |
+| Everton Fernandes S. Da Silva |
+| Silvano Bernardino da S.Filho |
 
-## 📝 Próximos Passos
-
-Sugestões para evolução do projeto:
-
-1. **Autenticação e Autorização**: Implementar Spring Security
-2. **Validações Avançadas**: Adicionar validações de negócio mais complexas
-3. **Paginação**: Implementar paginação nas listagens
-4. **Filtros**: Adicionar filtros por gênero, data, etc.
-5. **Cache**: Implementar cache para consultas frequentes
-6. **Integração**: Conectar com banco de dados production-ready
-7. **Monitoramento**: Adicionar métricas e health checks
-
-## 👨‍💻 Autor
-
-Desenvolvido como parte da disciplina de Backend 1 da Uniesp, demonstrando conceitos de desenvolvimento Java Enterprise com Spring Boot.
+Desenvolvido como parte da disciplina **Tecnologias para Backend (SpringBoot)** — UNIESP · Sistemas para Internet 2025/2026.

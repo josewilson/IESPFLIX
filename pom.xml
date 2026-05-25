@@ -11,8 +11,8 @@
 	<groupId>br.uniesp.si</groupId>
 	<artifactId>techback</artifactId>
 	<version>1.0.0-17032026</version>
-	<name>techback</name>
-	<description>Backend 1 Uniesp</description>
+	<name>IESPFLIX</name>
+	<description>IESPFLIX — Backend acadêmico · UNIESP Sistemas para Internet 2026</description>
 	<url/>
 	<licenses>
 		<license/>
@@ -94,6 +94,12 @@
 			<artifactId>lombok</artifactId>
 			<optional>true</optional>
 			<version>${lombok.version}</version>
+		</dependency>
+
+		<!-- BCrypt sem ativar Spring Security completo -->
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-crypto</artifactId>
 		</dependency>
 
 		<dependency>

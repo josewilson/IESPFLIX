@@ -1,14 +1,16 @@
 # Integrantes do Projeto
 
-| Nome Completo |
-|--------------|
-| Anakin Skywalker |
-| Bulma Briefs |
-| Darth Vader |
-| Gohan Son |
-| Goku Son |
-| Luke Skywalker |
-| Piccolo Daimaoh |
-| Princess Leia Organa |
-| Seiya de Pegasus |
-| Vegeta Prince |
+
+| Nome Completo                 |
+|-------------------------------|
+| José Wilson Alves de Souza    |
+| Ana Julya Rodrigues Dionizio  |
+| Alex Júlio de Brito           |
+| Everton Fernandes S. Da Silva |
+| Silvano Bernardino da S.Filho |
+|                               |
+|                               |
+|                               |
+|                               |
+| ------------------------------|
+
