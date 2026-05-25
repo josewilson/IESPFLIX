@@ -292,6 +292,6 @@ http://localhost:8080/h2
 
 Desenvolvido como projeto acadêmico da disciplina **Tecnologias para Backend (Spring Boot)**
 
-**Prof. Rodrigo Fujioka · UNIESP · Sistemas para Internet · 2025/P3**
+**Prof. Rodrigo Fujioka · UNIESP · Sistemas para Internet · 2026/P3**
 
 </div>
