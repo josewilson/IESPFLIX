@@ -3,8 +3,11 @@ package br.uniesp.si.techback.controller;
 import br.uniesp.si.techback.dto.UsuarioRequestDTO;
 import br.uniesp.si.techback.dto.UsuarioResponseDTO;
 import br.uniesp.si.techback.service.UsuarioService;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -30,7 +33,7 @@ public class UsuarioController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<UsuarioResponseDTO>> listar(@PageableDefault(size = 10) Pageable pageable) {
+    public ResponseEntity<Page<UsuarioResponseDTO>> listar(@ParameterObject @PageableDefault(size = 20) Pageable pageable) {
         return ResponseEntity.ok(usuarioService.listar(pageable));
     }
 
