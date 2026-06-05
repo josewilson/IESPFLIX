@@ -1,0 +1,1685 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IESPFLIX — Guia de Estudo · Backend Java Spring Boot</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    font-size: 13px;
+    line-height: 1.6;
+    color: #1a1a2e;
+    background: #f8f9fa;
+  }
+  .cover {
+    background: linear-gradient(135deg, #0f3460 0%, #16213e 60%, #1a1a2e 100%);
+    color: white;
+    text-align: center;
+    padding: 80px 40px;
+    page-break-after: always;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .cover h1 { font-size: 3em; letter-spacing: 3px; margin-bottom: 10px; color: #e94560; }
+  .cover h2 { font-size: 1.4em; font-weight: 300; margin-bottom: 40px; color: #a8dadc; }
+  .cover .badge {
+    display: inline-block;
+    background: #e94560;
+    color: white;
+    padding: 6px 20px;
+    border-radius: 20px;
+    font-size: 0.85em;
+    margin: 5px;
+  }
+  .cover .meta { margin-top: 60px; font-size: 0.9em; color: #aaa; }
+  .cover .tech-row { margin: 30px 0; }
+
+  .toc {
+    background: white;
+    padding: 50px 60px;
+    page-break-after: always;
+  }
+  .toc h2 { font-size: 1.8em; color: #0f3460; border-bottom: 3px solid #e94560; padding-bottom: 10px; margin-bottom: 30px; }
+  .toc ol { padding-left: 20px; }
+  .toc li { padding: 6px 0; font-size: 1.05em; }
+  .toc li a { color: #0f3460; text-decoration: none; }
+  .toc li span { color: #999; font-size: 0.9em; float: right; }
+
+  .chapter {
+    background: white;
+    padding: 50px 60px;
+    page-break-before: always;
+  }
+  .chapter-header {
+    background: linear-gradient(135deg, #0f3460, #16213e);
+    color: white;
+    padding: 20px 30px;
+    margin: -50px -60px 40px -60px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+  .chapter-num {
+    background: #e94560;
+    color: white;
+    width: 50px; height: 50px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.4em; font-weight: bold;
+    flex-shrink: 0;
+  }
+  .chapter-header h2 { font-size: 1.5em; }
+  .chapter-header p { font-size: 0.85em; opacity: 0.8; margin-top: 4px; }
+
+  h3 {
+    font-size: 1.15em;
+    color: #0f3460;
+    margin: 30px 0 12px 0;
+    padding-left: 12px;
+    border-left: 4px solid #e94560;
+  }
+  h4 {
+    font-size: 1em;
+    color: #333;
+    margin: 20px 0 8px 0;
+    font-weight: 600;
+  }
+  p { margin: 10px 0; color: #333; }
+
+  .concept-box {
+    background: #f0f4ff;
+    border: 1px solid #c5d3f0;
+    border-left: 5px solid #0f3460;
+    padding: 15px 20px;
+    margin: 15px 0;
+    border-radius: 0 8px 8px 0;
+  }
+  .concept-box strong { color: #0f3460; display: block; margin-bottom: 6px; font-size: 1.05em; }
+
+  .tip-box {
+    background: #fff8e1;
+    border: 1px solid #ffe082;
+    border-left: 5px solid #f9a825;
+    padding: 12px 18px;
+    margin: 12px 0;
+    border-radius: 0 8px 8px 0;
+  }
+  .tip-box::before { content: "💡 DICA: "; font-weight: bold; color: #e65100; }
+
+  .warn-box {
+    background: #fce4ec;
+    border: 1px solid #f48fb1;
+    border-left: 5px solid #e94560;
+    padding: 12px 18px;
+    margin: 12px 0;
+    border-radius: 0 8px 8px 0;
+  }
+  .warn-box::before { content: "⚠ ATENÇÃO: "; font-weight: bold; color: #c62828; }
+
+  .exam-box {
+    background: #e8f5e9;
+    border: 2px solid #4caf50;
+    padding: 15px 20px;
+    margin: 15px 0;
+    border-radius: 8px;
+  }
+  .exam-box strong { color: #1b5e20; display: block; margin-bottom: 8px; }
+
+  code {
+    background: #1a1a2e;
+    color: #a8ff78;
+    padding: 2px 7px;
+    border-radius: 4px;
+    font-family: 'Consolas', monospace;
+    font-size: 0.9em;
+  }
+  pre {
+    background: #1a1a2e;
+    color: #e0e0e0;
+    padding: 18px 20px;
+    border-radius: 8px;
+    overflow-x: auto;
+    margin: 15px 0;
+    font-family: 'Consolas', monospace;
+    font-size: 0.85em;
+    line-height: 1.5;
+  }
+  pre .kw  { color: #c792ea; }
+  pre .ann { color: #ffcb6b; }
+  pre .str { color: #c3e88d; }
+  pre .cmt { color: #546e7a; }
+  pre .cls { color: #82aaff; }
+  pre .num { color: #f78c6c; }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 15px 0;
+    font-size: 0.9em;
+  }
+  th {
+    background: #0f3460;
+    color: white;
+    padding: 10px 12px;
+    text-align: left;
+  }
+  td {
+    padding: 9px 12px;
+    border-bottom: 1px solid #e0e0e0;
+    vertical-align: top;
+  }
+  tr:nth-child(even) td { background: #f5f7ff; }
+  tr:hover td { background: #eef2ff; }
+
+  .flow {
+    background: #f8f9fa;
+    border: 2px solid #dee2e6;
+    border-radius: 8px;
+    padding: 20px;
+    font-family: 'Consolas', monospace;
+    font-size: 0.85em;
+    line-height: 2;
+    margin: 15px 0;
+    white-space: pre;
+  }
+
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 15px 0; }
+  .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin: 15px 0; }
+  .card {
+    background: white;
+    border: 1px solid #e0e0e0;
+    border-top: 4px solid #e94560;
+    border-radius: 8px;
+    padding: 15px;
+  }
+  .card h4 { color: #0f3460; margin-top: 0; }
+  .card.blue { border-top-color: #0f3460; }
+  .card.green { border-top-color: #4caf50; }
+  .card.orange { border-top-color: #f9a825; }
+
+  .tag {
+    display: inline-block;
+    background: #e94560;
+    color: white;
+    padding: 2px 9px;
+    border-radius: 12px;
+    font-size: 0.78em;
+    margin: 2px;
+    font-family: monospace;
+  }
+  .tag.blue { background: #0f3460; }
+  .tag.green { background: #4caf50; }
+  .tag.orange { background: #f9a825; color: #333; }
+  .tag.gray { background: #607d8b; }
+
+  .layer-row {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    margin: 8px 0;
+  }
+  .layer-box {
+    flex: 1;
+    padding: 10px 15px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 0.9em;
+  }
+  .arrow-right { font-size: 1.5em; color: #e94560; padding: 0 5px; }
+
+  ul, ol { padding-left: 22px; margin: 8px 0; }
+  li { margin: 4px 0; }
+
+  .endpoint-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 7px 12px;
+    border-bottom: 1px solid #eee;
+    font-family: monospace;
+    font-size: 0.88em;
+  }
+  .endpoint-row:hover { background: #f5f7ff; }
+  .method {
+    min-width: 65px;
+    text-align: center;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-weight: bold;
+    font-size: 0.8em;
+  }
+  .get { background: #e3f2fd; color: #0277bd; }
+  .post { background: #e8f5e9; color: #2e7d32; }
+  .put { background: #fff3e0; color: #e65100; }
+  .del { background: #fce4ec; color: #c62828; }
+
+  .page-footer {
+    text-align: center;
+    font-size: 0.75em;
+    color: #999;
+    margin-top: 40px;
+    padding-top: 15px;
+    border-top: 1px solid #eee;
+  }
+
+  @media print {
+    body { background: white; }
+    .chapter { page-break-before: always; }
+    .no-break { page-break-inside: avoid; }
+    a { color: inherit; text-decoration: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════ CAPA -->
+<div class="cover">
+  <h1>IESPFLIX</h1>
+  <h2>Guia Completo de Estudo — Backend Java</h2>
+  <div class="tech-row">
+    <span class="badge">Spring Boot 3.5</span>
+    <span class="badge">Java 21</span>
+    <span class="badge">JPA / Hibernate</span>
+    <span class="badge">OpenFeign</span>
+    <span class="badge">Swagger / OpenAPI</span>
+    <span class="badge">Bean Validation</span>
+    <span class="badge">REST API</span>
+  </div>
+  <div class="meta">
+    <p>UNIESP · Sistemas para Internet · 2025/2026</p>
+    <p>Disciplina: Tecnologias para Backend (Spring Boot) — Prof. Rodrigo Fujioka</p>
+    <p style="margin-top:20px; font-size:0.8em;">Gerado em 05/06/2026</p>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ SUMÁRIO -->
+<div class="toc">
+  <h2>Sumário</h2>
+  <ol>
+    <li><a href="#c1">O que é Spring Boot e por que usamos</a> <span>Conceito</span></li>
+    <li><a href="#c2">Arquitetura em Camadas (MVC)</a> <span>Conceito + Diagrama</span></li>
+    <li><a href="#c3">Entidades JPA — O modelo de dados</a> <span>Conceito + Código</span></li>
+    <li><a href="#c4">Repositórios (Spring Data JPA)</a> <span>Conceito + Código</span></li>
+    <li><a href="#c5">DTOs — Transferência de Dados</a> <span>Conceito + Código</span></li>
+    <li><a href="#c6">Services — Regras de Negócio</a> <span>Conceito + Código</span></li>
+    <li><a href="#c7">Controllers — Endpoints REST</a> <span>Conceito + Código</span></li>
+    <li><a href="#c8">Bean Validation — Validação de Dados</a> <span>Conceito + Código</span></li>
+    <li><a href="#c9">Validação Customizada (@CpfCnpj)</a> <span>Conceito + Código</span></li>
+    <li><a href="#c10">Tratamento de Exceções Global</a> <span>Conceito + Código</span></li>
+    <li><a href="#c11">APIs Externas — OpenFeign e RestTemplate</a> <span>Conceito + Código</span></li>
+    <li><a href="#c12">Swagger / OpenAPI — Documentação</a> <span>Conceito + Código</span></li>
+    <li><a href="#c13">Lombok — Geração de Código</a> <span>Conceito</span></li>
+    <li><a href="#c14">Correlation-ID e Logging</a> <span>Conceito + Código</span></li>
+    <li><a href="#c15">BCrypt — Hash de Senhas</a> <span>Conceito + Código</span></li>
+    <li><a href="#c16">Diagrama Completo do Projeto</a> <span>Referência</span></li>
+    <li><a href="#c17">Endpoints da API — Referência Rápida</a> <span>Referência</span></li>
+    <li><a href="#c18">Perguntas e Respostas para a Prova</a> <span>Revisão</span></li>
+  </ol>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ CAP 1 -->
+<div class="chapter" id="c1">
+  <div class="chapter-header">
+    <div class="chapter-num">1</div>
+    <div>
+      <h2>O que é Spring Boot e por que usamos</h2>
+      <p>Framework · Autoconfiguração · Servidor Embutido</p>
+    </div>
+  </div>
+
+  <div class="concept-box">
+    <strong>Spring Boot</strong>
+    É um framework Java que simplifica a criação de aplicações web e APIs REST. Ele elimina a necessidade de configuração manual XML, já vem com um servidor web embutido (Tomcat) e configura automaticamente tudo que detecta no classpath.
+  </div>
+
+  <h3>Por que Spring Boot e não Spring puro?</h3>
+  <div class="grid2">
+    <div class="card">
+      <h4>Spring puro (antigo)</h4>
+      <ul>
+        <li>Precisava configurar tudo manualmente em XML</li>
+        <li>Configurar o servidor separadamente (Tomcat, JBoss)</li>
+        <li>Centenas de linhas de configuração para um projeto simples</li>
+        <li>Alta curva de aprendizado</li>
+      </ul>
+    </div>
+    <div class="card blue">
+      <h4>Spring Boot (atual)</h4>
+      <ul>
+        <li>Autoconfiguração inteligente</li>
+        <li>Servidor Tomcat embutido (roda com <code>java -jar</code>)</li>
+        <li>Starters que agrupam dependências por funcionalidade</li>
+        <li>Projeto funcionando em minutos</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>Starters usados neste projeto</h3>
+  <table>
+    <tr><th>Starter</th><th>O que inclui automaticamente</th></tr>
+    <tr><td><code>spring-boot-starter-web</code></td><td>Tomcat embutido + Jackson (JSON) + Spring MVC</td></tr>
+    <tr><td><code>spring-boot-starter-data-jpa</code></td><td>Hibernate + Spring Data + gerenciamento de transações</td></tr>
+    <tr><td><code>spring-boot-starter-validation</code></td><td>Hibernate Validator (Bean Validation)</td></tr>
+    <tr><td><code>spring-cloud-starter-openfeign</code></td><td>Cliente HTTP declarativo para APIs externas</td></tr>
+    <tr><td><code>springdoc-openapi-starter-webmvc-ui</code></td><td>Swagger UI + documentação automática</td></tr>
+    <tr><td><code>spring-security-crypto</code></td><td>BCrypt para hash de senhas (sem ativar segurança completa)</td></tr>
+  </table>
+
+  <h3>A anotação mais importante: @SpringBootApplication</h3>
+  <pre><span class="ann">@SpringBootApplication</span>  <span class="cmt">// junta 3 anotações:</span>
+<span class="kw">public class</span> <span class="cls">TechbackApplication</span> {
+    <span class="kw">public static void</span> main(String[] args) {
+        SpringApplication.run(TechbackApplication.class, args);
+    }
+}
+<span class="cmt">// @SpringBootApplication = @Configuration + @EnableAutoConfiguration + @ComponentScan</span></pre>
+
+  <div class="tip-box">
+    O Spring Boot escaneia todos os pacotes a partir do pacote da classe principal e registra automaticamente todos os beans (@Component, @Service, @Repository, @Controller etc).
+  </div>
+
+  <div class="page-footer">IESPFLIX · Guia de Estudo · Capítulo 1</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ CAP 2 -->
+<div class="chapter" id="c2">
+  <div class="chapter-header">
+    <div class="chapter-num">2</div>
+    <div>
+      <h2>Arquitetura em Camadas (MVC)</h2>
+      <p>Controller → Service → Repository → Banco de Dados</p>
+    </div>
+  </div>
+
+  <div class="concept-box">
+    <strong>Arquitetura em Camadas</strong>
+    É um padrão de organização do código onde cada camada tem uma responsabilidade específica. Uma camada só se comunica com a camada imediatamente abaixo. Isso torna o código mais organizado, testável e fácil de manter.
+  </div>
+
+  <h3>As 4 camadas do IESPFLIX</h3>
+
+  <div class="flow">  CLIENTE HTTP (navegador, Postman, app mobile)
+         │  JSON na requisição
+         ▼
+  ┌──────────────────────────────────────────────────────────┐
+  │  CONTROLLER (@RestController)                            │
+  │  • Recebe a requisição HTTP                              │
+  │  • Valida o DTO com @Valid                               │
+  │  • Delega para o Service                                 │
+  │  • Retorna ResponseEntity com o status HTTP correto      │
+  └──────────────┬───────────────────────────────────────────┘
+                 │  chama método do Service
+                 ▼
+  ┌──────────────────────────────────────────────────────────┐
+  │  SERVICE (@Service)                                      │
+  │  • Contém as regras de negócio                           │
+  │  • Converte DTO → Entity e Entity → DTO (via Mapper)     │
+  │  • Gerencia transações (@Transactional)                  │
+  │  • Lança exceções de negócio (EntityNotFoundException)   │
+  └──────────────┬───────────────────────────────────────────┘
+                 │  chama método do Repository
+                 ▼
+  ┌──────────────────────────────────────────────────────────┐
+  │  REPOSITORY (@Repository / JpaRepository)                │
+  │  • Acessa o banco de dados                               │
+  │  • Fornece CRUD automático (save, findById, findAll...)  │
+  │  • Permite queries personalizadas com @Query (JPQL)      │
+  └──────────────┬───────────────────────────────────────────┘
+                 │  SQL gerado pelo Hibernate
+                 ▼
+  ┌──────────────────────────────────────────────────────────┐
+  │  BANCO DE DADOS (H2)                                     │
+  │  • Tabelas criadas automaticamente pelo Hibernate        │
+  │  • Arquivo persistido em ~/teckback20262                 │
+  └──────────────────────────────────────────────────────────┘</div>
+
+  <h3>Pacotes do projeto mapeados para as camadas</h3>
+  <table>
+    <tr><th>Pacote</th><th>Camada</th><th>Responsabilidade</th></tr>
+    <tr><td><code>controller/</code></td><td>Apresentação</td><td>Endpoints HTTP, mapeamento de rotas, validação de entrada</td></tr>
+    <tr><td><code>service/</code></td><td>Negócio</td><td>Regras de negócio, orquestração, transações</td></tr>
+    <tr><td><code>repository/</code></td><td>Persistência</td><td>Acesso ao banco de dados via JPA</td></tr>
+    <tr><td><code>model/</code></td><td>Domínio</td><td>Entidades que representam as tabelas do banco</td></tr>
+    <tr><td><code>dto/</code></td><td>Transferência</td><td>Objetos para entrada e saída da API</td></tr>
+    <tr><td><code>mapper/</code></td><td>Conversão</td><td>Transforma Entity em DTO e vice-versa</td></tr>
+    <tr><td><code>exception/</code></td><td>Transversal</td><td>Tratamento global de erros</td></tr>
+    <tr><td><code>config/</code></td><td>Configuração</td><td>Beans globais (BCrypt, RestTemplate, Swagger)</td></tr>
+    <tr><td><code>client/</code></td><td>Integração</td><td>Clientes HTTP para APIs externas</td></tr>
+    <tr><td><code>filter/</code></td><td>Transversal</td><td>Filtros que executam em toda requisição</td></tr>
+    <tr><td><code>validation/</code></td><td>Transversal</td><td>Validações customizadas reutilizáveis</td></tr>
+  </table>
+
+  <div class="exam-box">
+    <strong>Pergunta frequente em provas:</strong>
+    "Por que separamos em camadas?" — Resposta: para que cada classe tenha uma única responsabilidade (princípio SRP), facilitando testes, manutenção e evolução independente de cada parte.
+  </div>
+
+  <div class="page-footer">IESPFLIX · Guia de Estudo · Capítulo 2</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ CAP 3 -->
+<div class="chapter" id="c3">
+  <div class="chapter-header">
+    <div class="chapter-num">3</div>
+    <div>
+      <h2>Entidades JPA — O Modelo de Dados</h2>
+      <p>@Entity · @Table · @Id · @ManyToOne · @CreationTimestamp</p>
+    </div>
+  </div>
+
+  <div class="concept-box">
+    <strong>JPA (Java Persistence API)</strong>
+    É uma especificação Java que define como objetos Java são mapeados para tabelas de banco de dados. O Hibernate é a implementação mais usada do JPA. Com JPA, você escreve classes Java e o Hibernate cria e gerencia as tabelas automaticamente.
+  </div>
+
+  <h3>Anotações de Entidade — Explicadas</h3>
+  <table>
+    <tr><th>Anotação</th><th>Onde fica</th><th>O que faz</th></tr>
+    <tr><td><code>@Entity</code></td><td>Na classe</td><td>Diz ao Hibernate que esta classe representa uma tabela no banco</td></tr>
+    <tr><td><code>@Table(name="...")</code></td><td>Na classe</td><td>Define o nome da tabela. Sem ela, usa o nome da classe</td></tr>
+    <tr><td><code>@Id</code></td><td>No campo id</td><td>Marca este campo como chave primária (PRIMARY KEY)</td></tr>
+    <tr><td><code>@GeneratedValue(strategy = IDENTITY)</code></td><td>No campo id</td><td>O banco gera o ID automaticamente (AUTO_INCREMENT)</td></tr>
+    <tr><td><code>@Column(unique=true)</code></td><td>No campo</td><td>Cria constraint UNIQUE no banco</td></tr>
+    <tr><td><code>@Column(nullable=false)</code></td><td>No campo</td><td>Cria constraint NOT NULL no banco</td></tr>
+    <tr><td><code>@Column(columnDefinition="TEXT")</code></td><td>No campo</td><td>Define o tipo da coluna como TEXT (para textos longos)</td></tr>
+    <tr><td><code>@ManyToOne</code></td><td>No campo</td><td>Relacionamento N:1 — muitos registros apontam para um</td></tr>
+    <tr><td><code>@JoinColumn(name="...")</code></td><td>No campo</td><td>Define o nome da coluna de chave estrangeira (FK) no banco</td></tr>
+    <tr><td><code>@CreationTimestamp</code></td><td>No campo</td><td>Hibernate preenche automaticamente com a data/hora atual ao criar</td></tr>
+  </table>
+
+  <h3>Exemplo completo: Entidade Usuario</h3>
+  <pre><span class="ann">@Data</span> <span class="ann">@Builder</span> <span class="ann">@NoArgsConstructor</span> <span class="ann">@AllArgsConstructor</span>  <span class="cmt">// Lombok</span>
+<span class="ann">@Entity</span>                                              <span class="cmt">// marca como tabela</span>
+<span class="ann">@Table</span>(name = <span class="str">"usuarios"</span>)                          <span class="cmt">// nome da tabela no banco</span>
+<span class="kw">public class</span> <span class="cls">Usuario</span> {
+
+    <span class="ann">@Id</span>
+    <span class="ann">@GeneratedValue</span>(strategy = GenerationType.IDENTITY)
+    <span class="kw">private</span> Long id;                                  <span class="cmt">// chave primária auto</span>
+
+    <span class="ann">@NotBlank</span>
+    <span class="kw">private</span> String nome;
+
+    <span class="ann">@Email</span> <span class="ann">@NotBlank</span>
+    <span class="ann">@Column</span>(unique = <span class="kw">true</span>)                           <span class="cmt">// e-mail único no banco</span>
+    <span class="kw">private</span> String email;
+
+    <span class="kw">private</span> String senhaHash;                         <span class="cmt">// senha já criptografada</span>
+
+    <span class="ann">@Past</span>
+    <span class="kw">private</span> LocalDate dataNascimento;                 <span class="cmt">// deve ser data passada</span>
+
+    <span class="ann">@CreationTimestamp</span>
+    <span class="kw">private</span> LocalDateTime criadoEm;                   <span class="cmt">// preenchido automaticamente</span>
+}</pre>
+
+  <h3>Relacionamentos: Entidade Assinatura</h3>
+  <pre><span class="ann">@Entity</span>
+<span class="kw">public class</span> <span class="cls">Assinatura</span> {
+
+    <span class="ann">@ManyToOne</span>                                        <span class="cmt">// N assinaturas → 1 usuario</span>
+    <span class="ann">@JoinColumn</span>(name = <span class="str">"usuario_id"</span>)                 <span class="cmt">// coluna FK no banco</span>
+    <span class="kw">private</span> Usuario usuario;
+
+    <span class="ann">@ManyToOne</span>                                        <span class="cmt">// N assinaturas → 1 plano</span>
+    <span class="ann">@JoinColumn</span>(name = <span class="str">"plano_id"</span>)
+    <span class="kw">private</span> Plano plano;
+
+    <span class="kw">private</span> String status;                            <span class="cmt">// "ATIVA" ou "CANCELADA"</span>
+}</pre>
+
+  <h3>Diagrama de Relacionamentos</h3>
+  <div class="flow">  Usuario ─────1:N──────► Assinatura ◄────N:1──── Plano
+      │
+      ├──────1:N──────► MetodoPagamento
+      │
+      └──────1:N──────► Favorito ◄────────N:1──── Conteudo
+
+  Filme ──── entidade independente (sem relação com as demais)
+  Funcionario ── entidade independente (endereço via ViaCEP)</div>
+
+  <div class="exam-box">
+    <strong>Pergunta frequente em provas:</strong>
+    "O que acontece com <code>ddl-auto=update</code>?" — O Hibernate cria as tabelas que não existem e adiciona colunas novas, mas nunca apaga dados existentes.
+  </div>
+
+  <div class="page-footer">IESPFLIX · Guia de Estudo · Capítulo 3</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ CAP 4 -->
+<div class="chapter" id="c4">
+  <div class="chapter-header">
+    <div class="chapter-num">4</div>
+    <div>
+      <h2>Repositórios — Spring Data JPA</h2>
+      <p>JpaRepository · @Query · JPQL · Derived Queries</p>
+    </div>
+  </div>
+
+  <div class="concept-box">
+    <strong>Spring Data JPA</strong>
+    É uma camada sobre o JPA que elimina a necessidade de escrever código JDBC ou queries SQL para operações básicas. Ao criar uma interface que extende <code>JpaRepository&lt;Entidade, TipoDoId&gt;</code>, o Spring cria automaticamente a implementação com todos os métodos CRUD.
+  </div>
+
+  <h3>O que JpaRepository fornece automaticamente</h3>
+  <table>
+    <tr><th>Método</th><th>SQL equivalente</th></tr>
+    <tr><td><code>save(entity)</code></td><td>INSERT ou UPDATE (conforme o id)</td></tr>
+    <tr><td><code>findById(id)</code></td><td>SELECT * FROM tabela WHERE id = ?</td></tr>
+    <tr><td><code>findAll()</code></td><td>SELECT * FROM tabela</td></tr>
+    <tr><td><code>findAll(pageable)</code></td><td>SELECT * FROM tabela LIMIT ? OFFSET ?</td></tr>
+    <tr><td><code>deleteById(id)</code></td><td>DELETE FROM tabela WHERE id = ?</td></tr>
+    <tr><td><code>existsById(id)</code></td><td>SELECT COUNT(*) FROM tabela WHERE id = ?</td></tr>
+    <tr><td><code>count()</code></td><td>SELECT COUNT(*) FROM tabela</td></tr>
+  </table>
+
+  <h3>Tipos de query no Spring Data</h3>
+
+  <h4>1. Derived Query (nome do método vira a query)</h4>
+  <pre><span class="kw">public interface</span> <span class="cls">UsuarioRepository</span> extends JpaRepository&lt;<span class="cls">Usuario</span>, Long&gt; {
+
+    <span class="cmt">// Spring lê "findByEmail" e gera: SELECT * FROM usuarios WHERE email = ?</span>
+    Optional&lt;<span class="cls">Usuario</span>&gt; findByEmail(String email);
+}</pre>
+
+  <h4>2. @Query com JPQL (linguagem de query do JPA — usa nome das classes Java, não tabelas SQL)</h4>
+  <pre><span class="ann">@Query</span>(<span class="str">"select c from Conteudo c where lower(c.genero) = lower(:genero)"</span>)
+List&lt;<span class="cls">Conteudo</span>&gt; findByGeneroCaseInsensitive(<span class="ann">@Param</span>(<span class="str">"genero"</span>) String genero);
+
+<span class="cmt">// JPQL usa: nome da CLASSE Java (Conteudo) e nome do CAMPO Java (genero)</span>
+<span class="cmt">// SQL usa: nome da TABELA (conteudo) e nome da COLUNA (genero)</span></pre>
+
+  <h4>3. Paginação com Pageable</h4>
+  <pre><span class="ann">@Query</span>(<span class="str">"select c from Conteudo c order by c.relevancia desc"</span>)
+Page&lt;<span class="cls">Conteudo</span>&gt; findTopByRelevancia(Pageable pageable);
+
+<span class="cmt">// No Service: Pageable.ofSize(10) → retorna os 10 primeiros</span>
+<span class="cmt">// No Controller: @PageableDefault(size=10) Pageable pageable</span></pre>
+
+  <h3>Repositórios com queries customizadas no projeto</h3>
+  <table>
+    <tr><th>Repository</th><th>Query customizada</th><th>Para que serve</th></tr>
+    <tr><td>UsuarioRepository</td><td><code>findByEmail</code></td><td>Verificar e-mail duplicado</td></tr>
+    <tr><td>AssinaturaRepository</td><td><code>findByUsuarioId</code></td><td>Listar assinaturas de um usuário</td></tr>
+    <tr><td>MetodoPagamentoRepository</td><td><code>@Query ORDER BY principal DESC</code></td><td>Principal primeiro na listagem</td></tr>
+    <tr><td>ConteudoRepository</td><td>4 queries JPQL</td><td>Filtro por gênero, top relevância, busca por termo, filtro por ano</td></tr>
+    <tr><td>FavoritoRepository</td><td><code>ORDER BY adicionadoEm DESC</code></td><td>Favoritos mais recentes primeiro</td></tr>
+    <tr><td>FilmeRepository</td><td><code>ORDER BY titulo ASC</code></td><td>Filmes em ordem alfabética</td></tr>
+  </table>
+
+  <div class="tip-box">
+    JPQL usa nomes de classes Java e campos Java. SQL usa nomes de tabelas e colunas. No JPQL: <code>from Conteudo c</code> (classe). No SQL seria: <code>FROM conteudo c</code> (tabela).
+  </div>
+
+  <div class="page-footer">IESPFLIX · Guia de Estudo · Capítulo 4</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ CAP 5 -->
+<div class="chapter" id="c5">
+  <div class="chapter-header">
+    <div class="chapter-num">5</div>
+    <div>
+      <h2>DTOs — Data Transfer Objects</h2>
+      <p>RequestDTO · ResponseDTO · Por que não expor a Entity diretamente</p>
+    </div>
+  </div>
+
+  <div class="concept-box">
+    <strong>DTO (Data Transfer Object)</strong>
+    É um objeto simples que carrega apenas os dados necessários para uma operação específica. Separa o que a API recebe/devolve (DTO) do que está salvo no banco (Entity). Isso é essencial para segurança, flexibilidade e controle sobre o que é exposto.
+  </div>
+
+  <h3>Por que não usar a Entity diretamente na API?</h3>
+  <div class="grid2">
+    <div class="card">
+      <h4>Sem DTO (problema)</h4>
+      <ul>
+        <li>A senha seria retornada no JSON</li>
+        <li>Campos internos (senhaHash, criadoEm) ficam expostos</li>
+        <li>Mudança no banco quebra a API</li>
+        <li>Não há validação específica por operação</li>
+      </ul>
+    </div>
+    <div class="card green">
+      <h4>Com DTO (solução)</h4>
+      <ul>
+        <li>RequestDTO: define o que o cliente pode enviar</li>
+        <li>ResponseDTO: define o que o cliente recebe</li>
+        <li>Senha nunca vai no ResponseDTO</li>
+        <li>Validações específicas por operação</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>Padrão Request/Response do projeto</h3>
+  <pre><span class="cmt">// ENTRADA (o que o cliente envia para criar um usuário):</span>
+<span class="kw">public class</span> <span class="cls">UsuarioRequestDTO</span> {
+    <span class="ann">@NotBlank</span>  String nome;
+    <span class="ann">@Email @NotBlank</span>  String email;
+    <span class="ann">@NotBlank @Size</span>(min = <span class="num">8</span>)  String senha;   <span class="cmt">// enviada pelo cliente</span>
+    <span class="ann">@CpfCnpj</span>  String cpfCnpj;
+    <span class="ann">@Past</span>  LocalDate dataNascimento;
+}
+
+<span class="cmt">// SAÍDA (o que a API devolve):</span>
+<span class="kw">public class</span> <span class="cls">UsuarioResponseDTO</span> {
+    Long id;
+    String nome;
+    String email;
+    String cpfCnpj;
+    LocalDate dataNascimento;
+    String perfil;
+    LocalDateTime criadoEm;
+    <span class="cmt">// senha NÃO aparece aqui!</span>
+}</pre>
+
+  <h3>DTOs especiais: externos</h3>
+  <table>
+    <tr><th>DTO</th><th>Para que serve</th><th>Campos principais</th></tr>
+    <tr><td><code>ViaCepResponseDTO</code></td><td>Deserializa a resposta da API ViaCEP</td><td>cep, logradouro, bairro, localidade, uf, erro</td></tr>
+    <tr><td><code>FeriadoResponse</code></td><td>Deserializa a resposta da BrasilAPI</td><td>date, name, type</td></tr>
+  </table>
+
+  <h3>O papel do Mapper</h3>
+  <pre><span class="cmt">// Mapper converte Entity ↔ DTO</span>
+<span class="ann">@Component</span>
+<span class="kw">public class</span> <span class="cls">UsuarioMapper</span> {
+
+    <span class="kw">public</span> Usuario toEntity(UsuarioRequestDTO dto) {
+        <span class="kw">return</span> Usuario.builder()
+            .nome(dto.getNome())
+            .email(dto.getEmail())
+            <span class="cmt">// senha NÃO vai aqui: é tratada no Service com BCrypt</span>
+            .build();
+    }
+
+    <span class="kw">public</span> UsuarioResponseDTO toResponseDTO(Usuario u) {
+        <span class="kw">return</span> UsuarioResponseDTO.builder()
+            .id(u.getId())
+            .nome(u.getNome())
+            .email(u.getEmail())
+            <span class="cmt">// senhaHash NÃO vai para o cliente</span>
+            .build();
+    }
+}</pre>
+
+  <div class="exam-box">
+    <strong>Pergunta frequente em provas:</strong>
+    "Qual a diferença entre Entity e DTO?" — Entity é mapeada para o banco de dados. DTO é usado apenas para transferir dados entre o cliente e a API, sem acoplamento com o banco.
+  </div>
+
+  <div class="page-footer">IESPFLIX · Guia de Estudo · Capítulo 5</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ CAP 6 -->
+<div class="chapter" id="c6">
+  <div class="chapter-header">
+    <div class="chapter-num">6</div>
+    <div>
+      <h2>Services — Regras de Negócio</h2>
+      <p>@Service · @Transactional · EntityNotFoundException</p>
+    </div>
+  </div>
+
+  <div class="concept-box">
+    <strong>Service</strong>
+    É a camada onde ficam as regras de negócio da aplicação. O Controller apenas recebe a requisição e delega para o Service. O Service decide o que fazer: validar, buscar, salvar, lançar exceções, chamar outras classes.
+  </div>
+
+  <h3>Anotações importantes do Service</h3>
+  <table>
+    <tr><th>Anotação</th><th>O que faz</th></tr>
+    <tr><td><code>@Service</code></td><td>Registra a classe como bean do Spring, tornando-a injetável</td></tr>
+    <tr><td><code>@Transactional</code></td><td>Abre uma transação no banco. Se o método lançar exceção, faz rollback automático</td></tr>
+    <tr><td><code>@RequiredArgsConstructor</code></td><td>Lombok: gera construtor com todos os campos <code>final</code>, que o Spring usa para injeção</td></tr>
+    <tr><td><code>@Slf4j</code></td><td>Lombok: cria a variável <code>log</code> para registrar logs</td></tr>
+  </table>
+
+  <h3>Exemplo: UsuarioService — criação com regra de negócio</h3>
+  <pre><span class="ann">@Service</span>
+<span class="ann">@RequiredArgsConstructor</span>
+<span class="ann">@Slf4j</span>
+<span class="kw">public class</span> <span class="cls">UsuarioService</span> {
+
+    <span class="kw">private final</span> UsuarioRepository usuarioRepository;
+    <span class="kw">private final</span> UsuarioMapper usuarioMapper;
+    <span class="kw">private final</span> BCryptPasswordEncoder passwordEncoder;
+
+    <span class="ann">@Transactional</span>                                   <span class="cmt">// abre transação</span>
+    <span class="kw">public</span> UsuarioResponseDTO criar(UsuarioRequestDTO dto) {
+        log.info(<span class="str">"Criando usuário: {}"</span>, dto.getEmail());
+
+        <span class="cmt">// REGRA DE NEGÓCIO: e-mail único</span>
+        usuarioRepository.findByEmail(dto.getEmail()).ifPresent(u -> {
+            <span class="kw">throw new</span> DataIntegrityViolationException(<span class="str">"Email já cadastrado"</span>);
+        });
+
+        Usuario usuario = usuarioMapper.toEntity(dto);
+
+        <span class="cmt">// REGRA: senha deve ser armazenada com hash BCrypt</span>
+        usuario.setSenhaHash(passwordEncoder.encode(dto.getSenha()));
+
+        Usuario salvo = usuarioRepository.save(usuario);
+        <span class="kw">return</span> usuarioMapper.toResponseDTO(salvo);
+    }
+
+    <span class="kw">public</span> UsuarioResponseDTO buscarPorId(Long id) {
+        <span class="cmt">// REGRA: lança exceção se não encontrado (tratada pelo GlobalExceptionHandler)</span>
+        Usuario usuario = usuarioRepository.findById(id)
+            .orElseThrow(() -> <span class="kw">new</span> EntityNotFoundException(<span class="str">"Usuário não encontrado: "</span> + id));
+        <span class="kw">return</span> usuarioMapper.toResponseDTO(usuario);
+    }
+}</pre>
+
+  <h3>Por que @Transactional é importante?</h3>
+  <div class="grid2">
+    <div class="card">
+      <h4>Sem @Transactional</h4>
+      <ul>
+        <li>Se salvar A e B e B falhar, A permanece salvo</li>
+        <li>Dados inconsistentes no banco</li>
+        <li>Difícil de reverter</li>
+      </ul>
+    </div>
+    <div class="card green">
+      <h4>Com @Transactional</h4>
+      <ul>
+        <li>Se qualquer operação falhar, tudo é desfeito (rollback)</li>
+        <li>Banco fica em estado consistente</li>
+        <li>Automático: não precisa de código de rollback</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="tip-box">
+    O <code>@Transactional</code> deve ficar nos métodos de escrita (criar, atualizar, deletar). Métodos de leitura (listar, buscar) geralmente não precisam.
+  </div>
+
+  <div class="page-footer">IESPFLIX · Guia de Estudo · Capítulo 6</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ CAP 7 -->
+<div class="chapter" id="c7">
+  <div class="chapter-header">
+    <div class="chapter-num">7</div>
+    <div>
+      <h2>Controllers — Endpoints REST</h2>
+      <p>@RestController · HTTP Methods · ResponseEntity · Paginação</p>
+    </div>
+  </div>
+
+  <div class="concept-box">
+    <strong>REST (Representational State Transfer)</strong>
+    É um estilo arquitetural para APIs web. Cada recurso tem uma URL própria. As operações são feitas pelos verbos HTTP (GET, POST, PUT, DELETE). As respostas são em JSON. O status HTTP indica o resultado da operação.
+  </div>
+
+  <h3>Verbos HTTP e seus significados</h3>
+  <table>
+    <tr><th>Verbo</th><th>Operação</th><th>Status de sucesso</th><th>Exemplo</th></tr>
+    <tr><td><code>GET</code></td><td>Ler/buscar dado</td><td>200 OK</td><td>Listar usuários, buscar por ID</td></tr>
+    <tr><td><code>POST</code></td><td>Criar novo registro</td><td>201 Created</td><td>Criar usuário, criar conteúdo</td></tr>
+    <tr><td><code>PUT</code></td><td>Atualizar completamente</td><td>200 OK</td><td>Atualizar filme, cancelar assinatura</td></tr>
+    <tr><td><code>DELETE</code></td><td>Remover registro</td><td>204 No Content</td><td>Deletar usuário, remover favorito</td></tr>
+  </table>
+
+  <h3>Anotações dos Controllers</h3>
+  <table>
+    <tr><th>Anotação</th><th>O que faz</th></tr>
+    <tr><td><code>@RestController</code></td><td>Combina @Controller + @ResponseBody. Todos os métodos retornam JSON automaticamente</td></tr>
+    <tr><td><code>@RequestMapping("/rota")</code></td><td>Define o prefixo de URL para todos os métodos da classe</td></tr>
+    <tr><td><code>@GetMapping</code> / <code>@PostMapping</code></td><td>Mapeiam o método HTTP para o método Java</td></tr>
+    <tr><td><code>@PathVariable</code></td><td>Extrai valor da URL: <code>/usuarios/{id}</code></td></tr>
+    <tr><td><code>@RequestBody</code></td><td>Extrai o JSON do corpo da requisição e converte para DTO</td></tr>
+    <tr><td><code>@RequestParam</code></td><td>Extrai parâmetro da query string: <code>/conteudos/buscar?termo=action</code></td></tr>
+    <tr><td><code>@Valid</code></td><td>Ativa a validação do DTO (Bean Validation)</td></tr>
+  </table>
+
+  <h3>Exemplo: UsuarioController completo</h3>
+  <pre><span class="ann">@RestController</span>
+<span class="ann">@RequestMapping</span>(<span class="str">"/usuarios"</span>)
+<span class="ann">@RequiredArgsConstructor</span>
+<span class="kw">public class</span> <span class="cls">UsuarioController</span> {
+
+    <span class="kw">private final</span> UsuarioService usuarioService;
+
+    <span class="ann">@PostMapping</span>
+    <span class="kw">public</span> ResponseEntity&lt;UsuarioResponseDTO&gt; criar(<span class="ann">@Valid @RequestBody</span> UsuarioRequestDTO dto) {
+        UsuarioResponseDTO criado = usuarioService.criar(dto);
+        <span class="cmt">// Cria o header Location: /usuarios/42</span>
+        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+            .path(<span class="str">"/{id}"</span>).buildAndExpand(criado.getId()).toUri();
+        <span class="kw">return</span> ResponseEntity.created(location).body(criado);  <span class="cmt">// 201 Created</span>
+    }
+
+    <span class="ann">@GetMapping</span>
+    <span class="kw">public</span> ResponseEntity&lt;Page&lt;UsuarioResponseDTO&gt;&gt; listar(
+            <span class="ann">@PageableDefault</span>(size = <span class="num">20</span>) Pageable pageable) {
+        <span class="kw">return</span> ResponseEntity.ok(usuarioService.listar(pageable));  <span class="cmt">// 200 OK</span>
+    }
+
+    <span class="ann">@GetMapping</span>(<span class="str">"/{id}"</span>)
+    <span class="kw">public</span> ResponseEntity&lt;UsuarioResponseDTO&gt; buscarPorId(<span class="ann">@PathVariable</span> Long id) {
+        <span class="kw">return</span> ResponseEntity.ok(usuarioService.buscarPorId(id));
+    }
+
+    <span class="ann">@DeleteMapping</span>(<span class="str">"/{id}"</span>)
+    <span class="kw">public</span> ResponseEntity&lt;Void&gt; deletar(<span class="ann">@PathVariable</span> Long id) {
+        usuarioService.deletar(id);
+        <span class="kw">return</span> ResponseEntity.noContent().build();              <span class="cmt">// 204 No Content</span>
+    }
+}</pre>
+
+  <h3>ResponseEntity — Controle total da resposta HTTP</h3>
+  <table>
+    <tr><th>Código</th><th>Método</th><th>Quando usar</th></tr>
+    <tr><td>200</td><td><code>ResponseEntity.ok(body)</code></td><td>Busca, listagem, atualização bem-sucedida</td></tr>
+    <tr><td>201</td><td><code>ResponseEntity.created(uri).body(dto)</code></td><td>Criação de recurso (POST)</td></tr>
+    <tr><td>204</td><td><code>ResponseEntity.noContent().build()</code></td><td>Exclusão bem-sucedida</td></tr>
+    <tr><td>400</td><td>Lançado pelo GlobalExceptionHandler</td><td>Dados inválidos, JSON malformado</td></tr>
+    <tr><td>404</td><td>Lançado pelo GlobalExceptionHandler</td><td>Recurso não encontrado</td></tr>
+    <tr><td>409</td><td>Lançado pelo GlobalExceptionHandler</td><td>Conflito (e-mail duplicado)</td></tr>
+  </table>
+
+  <div class="page-footer">IESPFLIX · Guia de Estudo · Capítulo 7</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ CAP 8 -->
+<div class="chapter" id="c8">
+  <div class="chapter-header">
+    <div class="chapter-num">8</div>
+    <div>
+      <h2>Bean Validation — Validação de Dados</h2>
+      <p>@NotBlank · @Email · @Valid · MethodArgumentNotValidException</p>
+    </div>
+  </div>
+
+  <div class="concept-box">
+    <strong>Bean Validation (jakarta.validation)</strong>
+    É uma especificação Java para validar objetos através de anotações nos campos. Quando o Spring encontra <code>@Valid</code> em um parâmetro do controller, ele automaticamente valida o objeto antes de executar o método. Se a validação falhar, lança <code>MethodArgumentNotValidException</code>.
+  </div>
+
+  <h3>Todas as anotações de validação usadas no projeto</h3>
+  <table>
+    <tr><th>Anotação</th><th>Regra</th><th>Onde é usada</th></tr>
+    <tr><td><code>@NotBlank</code></td><td>Não pode ser nulo, vazio ou só espaços</td><td>nome, email, titulo, tipo, tokenizado</td></tr>
+    <tr><td><code>@NotNull</code></td><td>Não pode ser nulo (aceita string vazia)</td><td>usuarioId, principal</td></tr>
+    <tr><td><code>@Email</code></td><td>Deve ter formato válido de e-mail (com @)</td><td>UsuarioRequestDTO.email</td></tr>
+    <tr><td><code>@Past</code></td><td>Data deve ser anterior a hoje</td><td>UsuarioRequestDTO.dataNascimento</td></tr>
+    <tr><td><code>@Size(min=8)</code></td><td>String deve ter no mínimo 8 caracteres</td><td>UsuarioRequestDTO.senha</td></tr>
+    <tr><td><code>@Min(1888)</code></td><td>Número deve ser maior ou igual a 1888</td><td>ConteudoRequestDTO.ano</td></tr>
+    <tr><td><code>@Max(2100)</code></td><td>Número deve ser menor ou igual a 2100</td><td>ConteudoRequestDTO.ano</td></tr>
+    <tr><td><code>@Positive</code></td><td>Número deve ser positivo (maior que 0)</td><td>ConteudoRequestDTO.duracaoMinutos</td></tr>
+    <tr><td><code>@DecimalMin("0.0")</code></td><td>Decimal deve ser ≥ 0.0</td><td>ConteudoRequestDTO.relevancia</td></tr>
+    <tr><td><code>@DecimalMax("10.0")</code></td><td>Decimal deve ser ≤ 10.0</td><td>ConteudoRequestDTO.relevancia</td></tr>
+    <tr><td><code>@CpfCnpj</code></td><td>Deve ser CPF ou CNPJ válido (customizada)</td><td>UsuarioRequestDTO.cpfCnpj</td></tr>
+  </table>
+
+  <h3>Como a validação funciona na prática</h3>
+  <div class="flow">  1. Cliente envia POST /usuarios com JSON inválido (e-mail sem @):
+     { "nome": "João", "email": "joao-sem-arroba" }
+
+  2. Jackson deserializa para UsuarioRequestDTO
+
+  3. Spring detecta @Valid no parâmetro do Controller:
+     public ResponseEntity criar(@Valid @RequestBody UsuarioRequestDTO dto)
+
+  4. Hibernate Validator verifica as anotações:
+     @Email → "joao-sem-arroba" ✗ INVÁLIDO
+
+  5. Lança MethodArgumentNotValidException
+
+  6. GlobalExceptionHandler captura e retorna:
+     HTTP 400 Bad Request
+     { "status": 400, "message": "Dados inválidos na requisição" }</div>
+
+  <div class="exam-box">
+    <strong>Ponto importante:</strong>
+    As anotações de validação nos campos das Entities (como <code>@NotBlank</code> em <code>Usuario.nome</code>) são validadas pelo Hibernate antes de salvar no banco. As anotações nos DTOs (como <code>@NotBlank</code> em <code>UsuarioRequestDTO.nome</code>) são validadas pelo Bean Validation quando o <code>@Valid</code> está presente no controller.
+  </div>
+
+  <div class="page-footer">IESPFLIX · Guia de Estudo · Capítulo 8</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ CAP 9 -->
+<div class="chapter" id="c9">
+  <div class="chapter-header">
+    <div class="chapter-num">9</div>
+    <div>
+      <h2>Validação Customizada — @CpfCnpj</h2>
+      <p>@Constraint · ConstraintValidator · Anotação própria</p>
+    </div>
+  </div>
+
+  <div class="concept-box">
+    <strong>Validação Customizada</strong>
+    Quando as anotações prontas do Bean Validation não atendem, podemos criar nossa própria anotação de validação. São necessárias 2 classes: (1) a anotação que define o contrato, e (2) o validador que implementa a lógica.
+  </div>
+
+  <h3>Passo 1: Criar a anotação @CpfCnpj</h3>
+  <pre><span class="ann">@Documented</span>
+<span class="ann">@Constraint</span>(validatedBy = <span class="cls">CpfCnpjValidator</span>.class) <span class="cmt">// vincula ao validador</span>
+<span class="ann">@Target</span>(ElementType.FIELD)                          <span class="cmt">// aplica em campos</span>
+<span class="ann">@Retention</span>(RetentionPolicy.RUNTIME)                 <span class="cmt">// disponível em tempo de execução</span>
+<span class="kw">public @interface</span> <span class="cls">CpfCnpj</span> {
+    String message() <span class="kw">default</span> <span class="str">"CPF ou CNPJ inválido"</span>;  <span class="cmt">// mensagem de erro padrão</span>
+    Class&lt;?&gt;[] groups() <span class="kw">default</span> {};                    <span class="cmt">// obrigatório pela spec</span>
+    Class&lt;? extends Payload&gt;[] payload() <span class="kw">default</span> {}; <span class="cmt">// obrigatório pela spec</span>
+}</pre>
+
+  <h3>Passo 2: Implementar o validador</h3>
+  <pre><span class="kw">public class</span> <span class="cls">CpfCnpjValidator</span> <span class="kw">implements</span> ConstraintValidator&lt;<span class="cls">CpfCnpj</span>, String&gt; {
+
+    <span class="ann">@Override</span>
+    <span class="kw">public boolean</span> isValid(String value, ConstraintValidatorContext context) {
+        <span class="kw">if</span> (value == <span class="kw">null</span>) <span class="kw">return true</span>;  <span class="cmt">// null é permitido (use @NotNull se quiser proibir)</span>
+
+        String digits = value.replaceAll(<span class="str">"\\D"</span>, <span class="str">""</span>);  <span class="cmt">// remove . - /</span>
+
+        <span class="kw">if</span> (digits.length() == <span class="num">11</span>) <span class="kw">return</span> isValidCpf(digits);
+        <span class="kw">if</span> (digits.length() == <span class="num">14</span>) <span class="kw">return true</span>;  <span class="cmt">// tamanho válido para CNPJ</span>
+        <span class="kw">return false</span>;
+    }
+
+    <span class="kw">private boolean</span> isValidCpf(String cpf) {
+        <span class="cmt">// Rejeita CPFs com todos os dígitos iguais (111.111.111-11)</span>
+        <span class="kw">if</span> (cpf.chars().distinct().count() == <span class="num">1</span>) <span class="kw">return false</span>;
+
+        <span class="cmt">// Verifica primeiro dígito verificador</span>
+        <span class="kw">int</span> sum = <span class="num">0</span>;
+        <span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i < <span class="num">9</span>; i++) sum += (cpf.charAt(i) - <span class="str">'0'</span>) * (<span class="num">10</span> - i);
+        <span class="kw">int</span> first = <span class="num">11</span> - (sum % <span class="num">11</span>);
+        <span class="kw">if</span> (first >= <span class="num">10</span>) first = <span class="num">0</span>;
+        <span class="kw">if</span> (first != (cpf.charAt(<span class="num">9</span>) - <span class="str">'0'</span>)) <span class="kw">return false</span>;
+
+        <span class="cmt">// Verifica segundo dígito verificador</span>
+        sum = <span class="num">0</span>;
+        <span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i < <span class="num">10</span>; i++) sum += (cpf.charAt(i) - <span class="str">'0'</span>) * (<span class="num">11</span> - i);
+        <span class="kw">int</span> second = <span class="num">11</span> - (sum % <span class="num">11</span>);
+        <span class="kw">if</span> (second >= <span class="num">10</span>) second = <span class="num">0</span>;
+        <span class="kw">return</span> second == (cpf.charAt(<span class="num">10</span>) - <span class="str">'0'</span>);
+    }
+}</pre>
+
+  <h3>Como é usado</h3>
+  <pre><span class="kw">public class</span> <span class="cls">UsuarioRequestDTO</span> {
+    <span class="ann">@CpfCnpj</span>           <span class="cmt">// usa nossa anotação customizada</span>
+    <span class="kw">private</span> String cpfCnpj;
+}</pre>
+
+  <div class="tip-box">
+    O fluxo é: <code>@CpfCnpj</code> no campo → Spring detecta <code>@Constraint(validatedBy=CpfCnpjValidator.class)</code> → instancia o validador → chama <code>isValid()</code> → se retornar <code>false</code>, a validação falha com a mensagem definida.
+  </div>
+
+  <div class="page-footer">IESPFLIX · Guia de Estudo · Capítulo 9</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ CAP 10 -->
+<div class="chapter" id="c10">
+  <div class="chapter-header">
+    <div class="chapter-num">10</div>
+    <div>
+      <h2>Tratamento Global de Exceções</h2>
+      <p>@RestControllerAdvice · @ExceptionHandler · Padrão de Erro JSON</p>
+    </div>
+  </div>
+
+  <div class="concept-box">
+    <strong>@RestControllerAdvice</strong>
+    É uma classe especial que intercepta exceções lançadas por qualquer controller da aplicação. Em vez de tratar exceções em cada controller, centralizamos em um único lugar. Isso garante que todos os erros sejam retornados com o mesmo formato JSON.
+  </div>
+
+  <h3>Mapa de Exceções → Respostas HTTP</h3>
+  <table>
+    <tr><th>Exceção capturada</th><th>Status HTTP</th><th>Quando ocorre</th></tr>
+    <tr><td><code>MethodArgumentNotValidException</code></td><td>400 Bad Request</td><td>Bean Validation falhou (@Valid)</td></tr>
+    <tr><td><code>HttpMessageNotReadableException</code></td><td>400 Bad Request</td><td>JSON malformado na requisição</td></tr>
+    <tr><td><code>CustomBeanException</code></td><td>400 Bad Request</td><td>Regra de negócio violada (CEP inválido)</td></tr>
+    <tr><td><code>EntityNotFoundException</code></td><td>404 Not Found</td><td>Registro não encontrado no banco</td></tr>
+    <tr><td><code>NoResourceFoundException</code></td><td>404 Not Found</td><td>Rota não existe na API</td></tr>
+    <tr><td><code>DataIntegrityViolationException</code></td><td>409 Conflict</td><td>E-mail duplicado, violação de unique</td></tr>
+    <tr><td><code>Exception</code> (genérico)</td><td>500 Internal Server Error</td><td>Qualquer erro não tratado</td></tr>
+  </table>
+
+  <h3>Padrão de resposta de erro</h3>
+  <pre><span class="cmt">// Todo erro retorna este formato JSON:</span>
+{
+    <span class="str">"timestamp"</span>: <span class="str">"2026-06-05T14:30:00"</span>,
+    <span class="str">"status"</span>: <span class="num">404</span>,
+    <span class="str">"error"</span>: <span class="str">"Not Found"</span>,
+    <span class="str">"message"</span>: <span class="str">"Usuário não encontrado com ID: 99"</span>,
+    <span class="str">"path"</span>: <span class="str">"/usuarios/99"</span>
+}</pre>
+
+  <h3>Implementação do GlobalExceptionHandler</h3>
+  <pre><span class="ann">@Slf4j</span>
+<span class="ann">@RestControllerAdvice</span>                    <span class="cmt">// intercepta exceções de todos os controllers</span>
+<span class="kw">public class</span> <span class="cls">GlobalExceptionHandler</span> {
+
+    <span class="ann">@ExceptionHandler</span>(EntityNotFoundException.class)
+    <span class="kw">public</span> ResponseEntity&lt;Map&lt;String, Object&gt;&gt; handleEntityNotFound(
+            EntityNotFoundException ex, HttpServletRequest request) {
+
+        Map&lt;String, Object&gt; body = <span class="kw">new</span> LinkedHashMap&lt;&gt;();
+        body.put(<span class="str">"timestamp"</span>, LocalDateTime.now());
+        body.put(<span class="str">"status"</span>, <span class="num">404</span>);
+        body.put(<span class="str">"error"</span>, <span class="str">"Not Found"</span>);
+        body.put(<span class="str">"message"</span>, ex.getMessage());
+        body.put(<span class="str">"path"</span>, request.getRequestURI());
+
+        <span class="kw">return</span> ResponseEntity.status(HttpStatus.NOT_FOUND).body(body);
+    }
+}</pre>
+
+  <h3>CustomBeanException — exceção da aplicação</h3>
+  <pre><span class="cmt">// Exceção simples para regras de negócio:</span>
+<span class="kw">public class</span> <span class="cls">CustomBeanException</span> <span class="kw">extends</span> RuntimeException {
+    <span class="kw">public</span> CustomBeanException(String message) {
+        <span class="kw">super</span>(message);
+    }
+}
+
+<span class="cmt">// Uso no FuncionarioService:</span>
+<span class="kw">if</span> (Boolean.TRUE.equals(endereco.getErro())) {
+    <span class="kw">throw new</span> CustomBeanException(<span class="str">"CEP inválido para consulta no ViaCEP"</span>);
+}
+<span class="cmt">// → GlobalExceptionHandler captura → retorna 400 com a mensagem</span></pre>
+
+  <div class="exam-box">
+    <strong>Por que usar @RestControllerAdvice em vez de try/catch em cada controller?</strong>
+    Porque evita repetição de código. Sem ele, cada controller precisaria de try/catch para tratar cada tipo de exceção. Com ele, o tratamento é centralizado, consistente e fácil de modificar.
+  </div>
+
+  <div class="page-footer">IESPFLIX · Guia de Estudo · Capítulo 10</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ CAP 11 -->
+<div class="chapter" id="c11">
+  <div class="chapter-header">
+    <div class="chapter-num">11</div>
+    <div>
+      <h2>APIs Externas — OpenFeign e RestTemplate</h2>
+      <p>ViaCEP · BrasilAPI · Cliente Declarativo · Cliente Imperativo</p>
+    </div>
+  </div>
+
+  <div class="concept-box">
+    <strong>Integração com APIs externas</strong>
+    O projeto consome 2 APIs externas: ViaCEP (para buscar endereços por CEP) e BrasilAPI (para listar feriados nacionais). Cada uma usa um tipo diferente de cliente HTTP, demonstrando as duas abordagens mais usadas no Spring.
+  </div>
+
+  <h3>API 1: ViaCEP com OpenFeign (cliente declarativo)</h3>
+  <div class="concept-box">
+    <strong>OpenFeign</strong>
+    É um cliente HTTP declarativo: você define uma interface Java com anotações e o Spring cria a implementação automaticamente. Não precisa escrever código de conexão HTTP.
+  </div>
+  <pre><span class="cmt">// 1. Interface declarativa — Spring gera a implementação:</span>
+<span class="ann">@FeignClient</span>(name = <span class="str">"viaCepClient"</span>, url = <span class="str">"${viacep.url:https://viacep.com.br/ws}"</span>)
+<span class="kw">public interface</span> <span class="cls">ViaCepClient</span> {
+    <span class="ann">@GetMapping</span>(<span class="str">"/{cep}/json/"</span>)
+    ViaCepResponseDTO buscarPorCep(<span class="ann">@PathVariable</span>(<span class="str">"cep"</span>) String cep);
+}
+<span class="cmt">// URL final: https://viacep.com.br/ws/01310100/json/</span>
+
+<span class="cmt">// 2. DTO que deserializa a resposta JSON do ViaCEP:</span>
+<span class="kw">public class</span> <span class="cls">ViaCepResponseDTO</span> {
+    <span class="kw">private</span> String cep, logradouro, bairro, localidade, uf;
+    <span class="ann">@JsonProperty</span>(<span class="str">"erro"</span>)
+    <span class="kw">private</span> Boolean erro;   <span class="cmt">// ViaCEP retorna "erro": true quando CEP não existe</span>
+}
+
+<span class="cmt">// 3. Configuração da URL em application.properties:</span>
+viacep.url=https://viacep.com.br/ws
+
+<span class="cmt">// 4. Uso no FuncionarioService:</span>
+ViaCepResponseDTO endereco = viaCepClient.buscarPorCep(cepLimpo);
+funcionario.setLogradouro(endereco.getLogradouro());</pre>
+
+  <h3>API 2: BrasilAPI com RestTemplate (cliente imperativo)</h3>
+  <div class="concept-box">
+    <strong>RestTemplate</strong>
+    É o cliente HTTP clássico do Spring. Você chama métodos explicitamente passando a URL e o tipo esperado de retorno. É mais verboso que o Feign, mas mais simples para casos pontuais.
+  </div>
+  <pre><span class="cmt">// 1. Bean RestTemplate declarado em AppConfig:</span>
+<span class="ann">@Configuration</span>
+<span class="kw">public class</span> <span class="cls">AppConfig</span> {
+    <span class="ann">@Bean</span>
+    <span class="kw">public</span> RestTemplate restTemplate() { <span class="kw">return new</span> RestTemplate(); }
+}
+
+<span class="cmt">// 2. Service que consome a BrasilAPI:</span>
+<span class="ann">@Service</span>
+<span class="kw">public class</span> <span class="cls">BrasilApiService</span> {
+    <span class="kw">private final</span> RestTemplate restTemplate;
+
+    <span class="kw">public</span> List&lt;FeriadoResponse&gt; listarFeriados(Integer ano) {
+        String url = <span class="str">"https://brasilapi.com.br/api/feriados/v1/"</span> + ano;
+        FeriadoResponse[] feriados = restTemplate.getForObject(url, FeriadoResponse[].class);
+        <span class="kw">return</span> Arrays.asList(feriados != <span class="kw">null</span> ? feriados : <span class="kw">new</span> FeriadoResponse[<span class="num">0</span>]);
+    }
+}
+
+<span class="cmt">// 3. DTO da resposta:</span>
+<span class="kw">public class</span> <span class="cls">FeriadoResponse</span> {
+    <span class="kw">private</span> String date;   <span class="cmt">// "2026-01-01"</span>
+    <span class="kw">private</span> String name;   <span class="cmt">// "Confraternização Universal"</span>
+    <span class="kw">private</span> String type;   <span class="cmt">// "national"</span>
+}</pre>
+
+  <h3>Comparação: OpenFeign × RestTemplate</h3>
+  <table>
+    <tr><th>Característica</th><th>OpenFeign</th><th>RestTemplate</th></tr>
+    <tr><td>Forma</td><td>Declarativa (interface)</td><td>Imperativa (código)</td></tr>
+    <tr><td>Quantidade de código</td><td>Mínima</td><td>Mais verboso</td></tr>
+    <tr><td>Configuração</td><td>@FeignClient na interface</td><td>@Bean em @Configuration</td></tr>
+    <tr><td>Testabilidade</td><td>Fácil de mockar</td><td>Requer wrapper</td></tr>
+    <tr><td>Ideal para</td><td>Múltiplos endpoints, microserviços</td><td>Chamadas simples e pontuais</td></tr>
+  </table>
+
+  <div class="page-footer">IESPFLIX · Guia de Estudo · Capítulo 11</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ CAP 12 -->
+<div class="chapter" id="c12">
+  <div class="chapter-header">
+    <div class="chapter-num">12</div>
+    <div>
+      <h2>Swagger / OpenAPI — Documentação da API</h2>
+      <p>springdoc · /swagger-ui.html · OpenApiConfig</p>
+    </div>
+  </div>
+
+  <div class="concept-box">
+    <strong>Swagger / OpenAPI</strong>
+    O OpenAPI é uma especificação para descrever APIs REST. O Swagger UI é uma interface visual que lê essa especificação e gera uma página HTML interativa onde qualquer pessoa pode ver e testar os endpoints da API sem usar Postman ou curl.
+  </div>
+
+  <h3>Como está configurado no projeto</h3>
+  <pre><span class="cmt">// 1. Dependência no pom.xml:</span>
+&lt;dependency&gt;
+    &lt;groupId&gt;org.springdoc&lt;/groupId&gt;
+    &lt;artifactId&gt;springdoc-openapi-starter-webmvc-ui&lt;/artifactId&gt;
+    &lt;version&gt;2.8.8&lt;/version&gt;
+&lt;/dependency&gt;
+
+<span class="cmt">// 2. Customização do título/descrição em OpenApiConfig:</span>
+<span class="ann">@Configuration</span>
+<span class="kw">public class</span> <span class="cls">OpenApiConfig</span> {
+    <span class="ann">@Bean</span>
+    <span class="kw">public</span> OpenAPI openAPI() {
+        <span class="kw">return new</span> OpenAPI().info(<span class="kw">new</span> Info()
+            .title(<span class="str">"IESPFLIX API"</span>)
+            .description(<span class="str">"Backend acadêmico — UNIESP 2026"</span>)
+            .version(<span class="str">"1.0.0"</span>));
+    }
+}
+
+<span class="cmt">// 3. Configuração em application.properties:</span>
+springdoc.api-docs.path=/api-docs          <span class="cmt">// JSON com a spec OpenAPI</span>
+springdoc.swagger-ui.path=/swagger-ui.html <span class="cmt">// Interface visual</span>
+springdoc.swagger-ui.enabled=true
+springdoc.default-flat-param-object=true   <span class="cmt">// necessário para Pageable funcionar</span></pre>
+
+  <h3>URLs de acesso</h3>
+  <table>
+    <tr><th>URL</th><th>O que abre</th></tr>
+    <tr><td><code>http://localhost:8080/swagger-ui.html</code></td><td>Interface visual interativa para testar todos os endpoints</td></tr>
+    <tr><td><code>http://localhost:8080/api-docs</code></td><td>JSON com a especificação completa da API (OpenAPI 3.0)</td></tr>
+    <tr><td><code>http://localhost:8080/h2</code></td><td>Console web do banco H2 (ver tabelas, executar SQL)</td></tr>
+  </table>
+
+  <div class="tip-box">
+    O springdoc lê automaticamente todos os <code>@RestController</code>, <code>@GetMapping</code>, <code>@PostMapping</code> etc. e gera a documentação sem precisar anotar cada método manualmente. Para melhorar a documentação, você pode adicionar <code>@Operation</code> e <code>@ApiResponse</code> nos métodos dos controllers.
+  </div>
+
+  <div class="page-footer">IESPFLIX · Guia de Estudo · Capítulo 12</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ CAP 13 -->
+<div class="chapter" id="c13">
+  <div class="chapter-header">
+    <div class="chapter-num">13</div>
+    <div>
+      <h2>Lombok — Geração de Código em Tempo de Compilação</h2>
+      <p>@Data · @Builder · @Slf4j · @RequiredArgsConstructor</p>
+    </div>
+  </div>
+
+  <div class="concept-box">
+    <strong>Lombok</strong>
+    É uma biblioteca Java que gera código repetitivo (getters, setters, construtores, equals, hashCode, toString) automaticamente através de anotações. O código é gerado durante a compilação, então o bytecode final é o mesmo que se você tivesse escrito manualmente.
+  </div>
+
+  <h3>Anotações Lombok usadas no projeto</h3>
+  <table>
+    <tr><th>Anotação</th><th>Gera</th><th>Onde é usada</th></tr>
+    <tr><td><code>@Data</code></td><td>getters + setters + equals + hashCode + toString</td><td>Todas as entidades e DTOs</td></tr>
+    <tr><td><code>@Builder</code></td><td>Padrão Builder: <code>Usuario.builder().nome("X").build()</code></td><td>Entidades e alguns DTOs</td></tr>
+    <tr><td><code>@NoArgsConstructor</code></td><td>Construtor sem parâmetros (necessário para JPA)</td><td>Todas as entidades</td></tr>
+    <tr><td><code>@AllArgsConstructor</code></td><td>Construtor com todos os parâmetros</td><td>Entidades e DTOs</td></tr>
+    <tr><td><code>@RequiredArgsConstructor</code></td><td>Construtor com os campos <code>final</code> (injeção via construtor)</td><td>Controllers e Services</td></tr>
+    <tr><td><code>@Slf4j</code></td><td>Campo <code>private static final Logger log = LoggerFactory.getLogger(...)</code></td><td>Controllers e Services com log</td></tr>
+  </table>
+
+  <h3>Exemplo: com e sem Lombok</h3>
+  <pre><span class="cmt">// SEM Lombok — 40+ linhas de código repetitivo:</span>
+<span class="kw">public class</span> <span class="cls">FilmeDTO</span> {
+    <span class="kw">private</span> Long id;
+    <span class="kw">private</span> String titulo;
+    <span class="kw">public</span> Long getId() { <span class="kw">return</span> id; }
+    <span class="kw">public void</span> setId(Long id) { <span class="kw">this</span>.id = id; }
+    <span class="kw">public</span> String getTitulo() { <span class="kw">return</span> titulo; }
+    <span class="kw">public void</span> setTitulo(String titulo) { <span class="kw">this</span>.titulo = titulo; }
+    <span class="cmt">// + equals, hashCode, toString, construtores...</span>
+}
+
+<span class="cmt">// COM Lombok — 5 linhas, mesma funcionalidade:</span>
+<span class="ann">@Data @Builder @NoArgsConstructor @AllArgsConstructor</span>
+<span class="kw">public class</span> <span class="cls">FilmeDTO</span> {
+    <span class="kw">private</span> Long id;
+    <span class="kw">private</span> String titulo;
+}</pre>
+
+  <h3>Por que @RequiredArgsConstructor nos Services?</h3>
+  <pre><span class="ann">@Service</span>
+<span class="ann">@RequiredArgsConstructor</span>  <span class="cmt">// Lombok gera o construtor abaixo automaticamente</span>
+<span class="kw">public class</span> <span class="cls">UsuarioService</span> {
+    <span class="kw">private final</span> UsuarioRepository usuarioRepository;  <span class="cmt">// final = injetado</span>
+    <span class="kw">private final</span> UsuarioMapper usuarioMapper;
+    <span class="kw">private final</span> BCryptPasswordEncoder passwordEncoder;
+}
+
+<span class="cmt">// Equivale a escrever manualmente:</span>
+<span class="kw">public</span> UsuarioService(UsuarioRepository r, UsuarioMapper m, BCryptPasswordEncoder e) {
+    <span class="kw">this</span>.usuarioRepository = r;
+    <span class="kw">this</span>.usuarioMapper = m;
+    <span class="kw">this</span>.passwordEncoder = e;
+}
+<span class="cmt">// O Spring usa este construtor para injetar as dependências (Injeção via Construtor)</span></pre>
+
+  <div class="page-footer">IESPFLIX · Guia de Estudo · Capítulo 13</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ CAP 14 -->
+<div class="chapter" id="c14">
+  <div class="chapter-header">
+    <div class="chapter-num">14</div>
+    <div>
+      <h2>Correlation-ID e Logging</h2>
+      <p>MDC · Filter · Rastreabilidade de Requisições</p>
+    </div>
+  </div>
+
+  <div class="concept-box">
+    <strong>Correlation-ID</strong>
+    É um identificador único (UUID) gerado para cada requisição HTTP. Ele é injetado em todos os logs daquela requisição, permitindo rastrear o fluxo completo de uma chamada nos logs, mesmo em sistemas com muitas requisições simultâneas.
+  </div>
+
+  <h3>Como está implementado: CorrelationIdFilter</h3>
+  <pre><span class="ann">@Component</span>                              <span class="cmt">// registrado automaticamente pelo Spring</span>
+<span class="kw">public class</span> <span class="cls">CorrelationIdFilter</span> <span class="kw">implements</span> Filter {
+
+    <span class="ann">@Override</span>
+    <span class="kw">public void</span> doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
+            throws IOException, ServletException {
+
+        String correlationId = UUID.randomUUID().toString();  <span class="cmt">// gera ID único</span>
+        MDC.put(<span class="str">"correlationId"</span>, correlationId);             <span class="cmt">// injeta no contexto de log</span>
+        <span class="kw">try</span> {
+            chain.doFilter(req, res);  <span class="cmt">// deixa a requisição continuar</span>
+        } <span class="kw">finally</span> {
+            MDC.clear();              <span class="cmt">// limpa ao final (evita vazamento entre threads)</span>
+        }
+    }
+}</pre>
+
+  <h3>Configuração do padrão de log (application.properties)</h3>
+  <pre><span class="cmt"># O %X{correlationId} injeta o valor do MDC em cada linha de log:</span>
+logging.pattern.console=%d{HH:mm:ss} [%X{correlationId}] %-5level %logger{36} - %msg%n</pre>
+
+  <h3>Como aparece nos logs</h3>
+  <pre><span class="cmt">// Sem Correlation-ID — difícil rastrear:</span>
+14:30:01 INFO UsuarioService - Criando usuário: joao@email.com
+14:30:01 INFO UsuarioService - Criando usuário: maria@email.com
+14:30:01 INFO UsuarioService - Usuário criado com ID: 1
+14:30:01 INFO UsuarioService - Usuário criado com ID: 2
+
+<span class="cmt">// Com Correlation-ID — fácil rastrear qual log pertence a qual requisição:</span>
+14:30:01 [<span class="str">abc-123-def</span>] INFO UsuarioService - Criando usuário: joao@email.com
+14:30:01 [<span class="str">xyz-456-ghi</span>] INFO UsuarioService - Criando usuário: maria@email.com
+14:30:01 [<span class="str">abc-123-def</span>] INFO UsuarioService - Usuário criado com ID: 1
+14:30:01 [<span class="str">xyz-456-ghi</span>] INFO UsuarioService - Usuário criado com ID: 2</pre>
+
+  <div class="concept-box">
+    <strong>MDC (Mapped Diagnostic Context)</strong>
+    É um mapa de pares chave-valor mantido pelo framework de log (SLF4J/Logback) por thread. Qualquer valor colocado no MDC aparece automaticamente em todos os logs gerados por aquela thread, sem precisar passar o valor manualmente para cada método.
+  </div>
+
+  <div class="page-footer">IESPFLIX · Guia de Estudo · Capítulo 14</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ CAP 15 -->
+<div class="chapter" id="c15">
+  <div class="chapter-header">
+    <div class="chapter-num">15</div>
+    <div>
+      <h2>BCrypt — Hash de Senhas</h2>
+      <p>spring-security-crypto · BCryptPasswordEncoder · Segurança</p>
+    </div>
+  </div>
+
+  <div class="concept-box">
+    <strong>Hash de senha</strong>
+    Senhas NUNCA devem ser armazenadas em texto puro no banco. BCrypt é um algoritmo de hash unidirecional: transforma a senha em uma string aleatória irreversível. Para verificar a senha, compara-se o hash, não a senha em texto puro.
+  </div>
+
+  <h3>Como está implementado</h3>
+  <pre><span class="cmt">// 1. Bean declarado em AppConfig (sem ativar Spring Security completo):</span>
+<span class="ann">@Configuration</span>
+<span class="kw">public class</span> <span class="cls">AppConfig</span> {
+    <span class="ann">@Bean</span>
+    <span class="kw">public</span> BCryptPasswordEncoder passwordEncoder() {
+        <span class="kw">return new</span> BCryptPasswordEncoder();
+    }
+}
+
+<span class="cmt">// 2. Uso no UsuarioService na criação:</span>
+usuario.setSenhaHash(passwordEncoder.encode(dto.getSenha()));
+<span class="cmt">// "minha123" → "$2a$10$X9kGKjx8Qv2K3..."  (irreversível)</span>
+
+<span class="cmt">// 3. O ResponseDTO NÃO inclui senhaHash:</span>
+<span class="kw">public class</span> <span class="cls">UsuarioResponseDTO</span> {
+    <span class="kw">private</span> Long id;
+    <span class="kw">private</span> String nome;
+    <span class="kw">private</span> String email;
+    <span class="cmt">// senhaHash propositalmente omitida</span>
+}</pre>
+
+  <h3>Por que BCrypt é preferido?</h3>
+  <table>
+    <tr><th>Característica</th><th>Detalhe</th></tr>
+    <tr><td>Unidirecional</td><td>Impossível reverter o hash para obter a senha original</td></tr>
+    <tr><td>Salt automático</td><td>Gera um salt aleatório para cada senha, evitando rainbow tables</td></tr>
+    <tr><td>Custo ajustável</td><td>O fator de custo pode ser aumentado conforme o hardware evolui</td></tr>
+    <tr><td>Dois hashes diferentes</td><td><code>encode("123")</code> chamado 2x gera resultados diferentes, mas ambos válidos</td></tr>
+  </table>
+
+  <div class="warn-box">
+    Nunca armazene senhas em texto puro. Mesmo que o banco seja comprometido, com BCrypt o atacante não consegue as senhas reais.
+  </div>
+
+  <div class="page-footer">IESPFLIX · Guia de Estudo · Capítulo 15</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ CAP 16 -->
+<div class="chapter" id="c16">
+  <div class="chapter-header">
+    <div class="chapter-num">16</div>
+    <div>
+      <h2>Diagrama Completo do Projeto</h2>
+      <p>Todos os pacotes, classes e relacionamentos</p>
+    </div>
+  </div>
+
+  <h3>Mapa de relacionamentos entre classes</h3>
+  <div class="flow">                        ┌─────────────────────────────────────────────┐
+                        │              CLIENTE HTTP                   │
+                        └──────────────────────┬──────────────────────┘
+                                               │ HTTP Request (JSON)
+                                               ▼
+  ┌──────────────────────────────────────────────────────────────────────────────────┐
+  │                         FILTER (executa em toda requisição)                      │
+  │  CorrelationIdFilter → gera UUID → MDC.put("correlationId") → chain.doFilter()  │
+  └──────────────────────────────────────────────────────────────────────────────────┘
+                                               │
+                                               ▼
+  ┌──────────────────── CONTROLLERS (/pacote controller/) ──────────────────────────┐
+  │  UsuarioController    PlanoController     AssinaturaController                  │
+  │  MetodoPagamentoCtrl  ConteudoController  FavoritoController                    │
+  │  FilmeController      FuncionarioCtrl     EnderecoController  FeriadoController │
+  │                                                                                  │
+  │  @RestController + @RequestMapping + @Valid + ResponseEntity                    │
+  └───────────┬──────────────────────────────────────────────┬───────────────────────┘
+              │ chama service                                  │ EnderecoCtrl usa diretamente
+              ▼                                               ▼ ViaCepClient
+  ┌────────────────── SERVICES (/pacote service/) ──────────────────────────────────┐
+  │  UsuarioService    PlanoService     AssinaturaService   MetodoPagamentoService  │
+  │  ConteudoService   FavoritoService  FilmeService        FuncionarioService       │
+  │  externo/BrasilApiService                                                        │
+  │                                                                                  │
+  │  @Service + @Transactional + EntityNotFoundException + log.info()               │
+  └──────┬───────────────────────────┬──────────────────────────────────────────────┘
+         │ chama repository           │ chama mapper / APIs externas
+         ▼                            ▼
+  ┌───── REPOSITORIES ─────┐  ┌──── MAPPERS ─────┐  ┌── EXTERNOS ──────────────────┐
+  │  JpaRepository         │  │  UsuarioMapper   │  │  ViaCepClient (OpenFeign)     │
+  │  + @Query (JPQL)       │  │  ConteudoMapper  │  │  → viacep.com.br             │
+  │                        │  │  FavoritoMapper  │  │                               │
+  │                        │  │  FilmeMapper     │  │  BrasilApiService (RestTempl) │
+  └──────────┬─────────────┘  └──────────────────┘  │  → brasilapi.com.br          │
+             │ SQL (Hibernate)                        └──────────────────────────────┘
+             ▼
+  ┌────────── BANCO H2 ────────────────────────────────────────────────────────────┐
+  │  tabelas: usuarios, plano, assinatura, metodo_pagamento,                       │
+  │           conteudo, favorito, filmes, funcionarios                             │
+  └────────────────────────────────────────────────────────────────────────────────┘
+
+  TRATAMENTO DE ERROS (transversal):
+  GlobalExceptionHandler (@RestControllerAdvice) — intercepta qualquer exceção
+  400: MethodArgumentNotValidException / CustomBeanException / JSON malformado
+  404: EntityNotFoundException / NoResourceFoundException
+  409: DataIntegrityViolationException
+  500: Exception (fallback)</div>
+
+  <h3>Diagrama de Entidades (banco)</h3>
+  <div class="flow">  [usuarios] ─1──────N─► [assinatura] ◄─N──────1─ [plano]
+      │pk:id                 pk:id                    pk:id
+      │                      fk:usuario_id
+      │                      fk:plano_id
+      │
+      ├────1──────N─► [metodo_pagamento]
+      │                 pk:id · fk:usuario_id
+      │                 tipo · tokenizado · principal
+      │
+      └────1──────N─► [favorito] ◄─N──────1─ [conteudo]
+                        pk:id               pk:id
+                        fk:usuario_id       titulo · tipo · ano
+                        fk:conteudo_id      duracao · relevancia
+                        adicionadoEm        sinopse · trailerUrl
+
+  [filmes] ──── entidade independente
+    id · titulo · sinopse · dataLancamento · genero · duracao · classificacao
+
+  [funcionarios] ──── entidade independente
+    id · nome · cargo · cep · logradouro · bairro · localidade · uf</div>
+
+  <div class="page-footer">IESPFLIX · Guia de Estudo · Capítulo 16</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ CAP 17 -->
+<div class="chapter" id="c17">
+  <div class="chapter-header">
+    <div class="chapter-num">17</div>
+    <div>
+      <h2>Endpoints da API — Referência Rápida</h2>
+      <p>Todos os endpoints organizados por recurso</p>
+    </div>
+  </div>
+
+  <h3>Filmes <span style="color:#999; font-weight:normal; font-size:0.85em">— /filmes</span></h3>
+  <div class="endpoint-row"><span class="method get">GET</span><code>/filmes</code> — lista todos (com DTO)</div>
+  <div class="endpoint-row"><span class="method get">GET</span><code>/filmes/ordenado</code> — lista ordenado por título (retorna Entity)</div>
+  <div class="endpoint-row"><span class="method get">GET</span><code>/filmes/{id}</code> — busca por ID</div>
+  <div class="endpoint-row"><span class="method post">POST</span><code>/filmes</code> — cria novo filme (body: FilmeDTO) → 201 Created</div>
+  <div class="endpoint-row"><span class="method put">PUT</span><code>/filmes/{id}</code> — atualiza filme</div>
+  <div class="endpoint-row"><span class="method del">DELETE</span><code>/filmes/{id}</code> — exclui filme → 204 No Content</div>
+
+  <h3>Usuários <span style="color:#999; font-weight:normal; font-size:0.85em">— /usuarios</span></h3>
+  <div class="endpoint-row"><span class="method post">POST</span><code>/usuarios</code> — cria usuário (valida @CpfCnpj, @Email, hash BCrypt) → 201</div>
+  <div class="endpoint-row"><span class="method get">GET</span><code>/usuarios?page=0&size=20</code> — listagem paginada</div>
+  <div class="endpoint-row"><span class="method get">GET</span><code>/usuarios/{id}</code> — busca por ID</div>
+  <div class="endpoint-row"><span class="method put">PUT</span><code>/usuarios/{id}</code> — atualiza dados</div>
+  <div class="endpoint-row"><span class="method del">DELETE</span><code>/usuarios/{id}</code> — exclui → 204</div>
+
+  <h3>Planos <span style="color:#999; font-weight:normal; font-size:0.85em">— /planos</span></h3>
+  <div class="endpoint-row"><span class="method post">POST</span><code>/planos</code> — cria plano → 201</div>
+  <div class="endpoint-row"><span class="method get">GET</span><code>/planos</code> — lista todos</div>
+
+  <h3>Assinaturas <span style="color:#999; font-weight:normal; font-size:0.85em">— /assinaturas</span></h3>
+  <div class="endpoint-row"><span class="method post">POST</span><code>/assinaturas</code> — cria (status=ATIVA) → 201</div>
+  <div class="endpoint-row"><span class="method get">GET</span><code>/assinaturas/usuario/{id}</code> — lista por usuário</div>
+  <div class="endpoint-row"><span class="method put">PUT</span><code>/assinaturas/{id}/cancelar</code> — muda status para CANCELADA</div>
+
+  <h3>Métodos de Pagamento <span style="color:#999; font-weight:normal; font-size:0.85em">— /metodos-pagamento</span></h3>
+  <div class="endpoint-row"><span class="method post">POST</span><code>/metodos-pagamento</code> — cria (valida @NotNull, @NotBlank) → 201</div>
+  <div class="endpoint-row"><span class="method get">GET</span><code>/metodos-pagamento/usuario/{id}</code> — lista por usuário (principal primeiro)</div>
+  <div class="endpoint-row"><span class="method del">DELETE</span><code>/metodos-pagamento/{id}</code> — remove → 204</div>
+
+  <h3>Conteúdos <span style="color:#999; font-weight:normal; font-size:0.85em">— /conteudos</span></h3>
+  <div class="endpoint-row"><span class="method post">POST</span><code>/conteudos</code> — cria (valida @Min, @Max, @Positive, @DecimalMin/Max) → 201</div>
+  <div class="endpoint-row"><span class="method get">GET</span><code>/conteudos?page=0&size=10</code> — lista paginada</div>
+  <div class="endpoint-row"><span class="method get">GET</span><code>/conteudos/{id}</code> — busca por ID</div>
+  <div class="endpoint-row"><span class="method get">GET</span><code>/conteudos/genero/{genero}</code> — filtra por gênero (case-insensitive)</div>
+  <div class="endpoint-row"><span class="method get">GET</span><code>/conteudos/top?n=10</code> — top N por relevância</div>
+  <div class="endpoint-row"><span class="method get">GET</span><code>/conteudos/buscar?termo=acao</code> — busca em título e sinopse</div>
+  <div class="endpoint-row"><span class="method get">GET</span><code>/conteudos/lancados-apos?ano=2020</code> — filtra por ano</div>
+  <div class="endpoint-row"><span class="method put">PUT</span><code>/conteudos/{id}</code> — atualiza</div>
+  <div class="endpoint-row"><span class="method del">DELETE</span><code>/conteudos/{id}</code> — exclui → 204</div>
+
+  <h3>Favoritos <span style="color:#999; font-weight:normal; font-size:0.85em">— /favoritos</span></h3>
+  <div class="endpoint-row"><span class="method post">POST</span><code>/favoritos</code> — adiciona favorito → 201</div>
+  <div class="endpoint-row"><span class="method get">GET</span><code>/favoritos/usuario/{id}</code> — lista por usuário (mais recentes primeiro)</div>
+  <div class="endpoint-row"><span class="method del">DELETE</span><code>/favoritos/{id}</code> — remove → 204</div>
+
+  <h3>Funcionários <span style="color:#999; font-weight:normal; font-size:0.85em">— /funcionarios</span></h3>
+  <div class="endpoint-row"><span class="method get">GET</span><code>/funcionarios</code> — lista todos</div>
+  <div class="endpoint-row"><span class="method post">POST</span><code>/funcionarios</code> — cria e preenche endereço via ViaCEP → 200</div>
+
+  <h3>Externas <span style="color:#999; font-weight:normal; font-size:0.85em">— /enderecos · /feriados</span></h3>
+  <div class="endpoint-row"><span class="method get">GET</span><code>/enderecos/{cep}</code> — consulta endereço no ViaCEP</div>
+  <div class="endpoint-row"><span class="method get">GET</span><code>/feriados/{ano}</code> — lista feriados nacionais via BrasilAPI</div>
+
+  <div class="page-footer">IESPFLIX · Guia de Estudo · Capítulo 17</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ CAP 18 -->
+<div class="chapter" id="c18">
+  <div class="chapter-header">
+    <div class="chapter-num">18</div>
+    <div>
+      <h2>Perguntas e Respostas para a Prova</h2>
+      <p>Questões objetivas e dissertativas mais prováveis</p>
+    </div>
+  </div>
+
+  <h3>Bloco 1 — Conceitos Fundamentais</h3>
+
+  <div class="exam-box no-break">
+    <strong>Q: O que é o Spring Boot e qual sua principal vantagem sobre o Spring Framework puro?</strong>
+    Spring Boot é um framework que simplifica a criação de aplicações Spring com autoconfiguração, servidor embutido e starters. Sua principal vantagem é eliminar configurações manuais: com pouquíssimas linhas de código, a aplicação já está funcionando com Tomcat, JPA, Swagger etc. configurados automaticamente.
+  </div>
+
+  <div class="exam-box no-break">
+    <strong>Q: Qual é a diferença entre @Component, @Service, @Repository e @Controller?</strong>
+    Todas são especializações de @Component (registram beans no contexto Spring), mas com semântica específica: @Service indica lógica de negócio, @Repository indica acesso a dados e permite tradução de exceções JPA, @Controller/@RestController indica camada de apresentação HTTP.
+  </div>
+
+  <div class="exam-box no-break">
+    <strong>Q: Para que serve a anotação @Transactional?</strong>
+    Ela garante que todas as operações de banco de dados dentro do método ocorram como uma única transação atômica. Se qualquer operação falhar, o Spring faz rollback automático, mantendo o banco em estado consistente.
+  </div>
+
+  <h3>Bloco 2 — JPA e Persistência</h3>
+
+  <div class="exam-box no-break">
+    <strong>Q: O que é JPQL e como difere do SQL?</strong>
+    JPQL (Java Persistence Query Language) é a linguagem de consulta do JPA. Diferente do SQL que opera sobre tabelas e colunas, o JPQL opera sobre classes Java e seus campos. Ex: SQL: <code>SELECT * FROM usuarios WHERE email = ?</code> → JPQL: <code>SELECT u FROM Usuario u WHERE u.email = ?</code>.
+  </div>
+
+  <div class="exam-box no-break">
+    <strong>Q: O que acontece com ddl-auto=update?</strong>
+    O Hibernate cria tabelas que não existem e adiciona novas colunas às existentes. Porém, nunca remove colunas nem apaga dados. É seguro para desenvolvimento, mas em produção usa-se validate ou none.
+  </div>
+
+  <div class="exam-box no-break">
+    <strong>Q: O que é @ManyToOne e @JoinColumn?</strong>
+    @ManyToOne declara um relacionamento N:1 entre entidades. @JoinColumn define o nome da coluna de chave estrangeira no banco. Ex: em Assinatura, @ManyToOne + @JoinColumn(name="usuario_id") cria a coluna usuario_id na tabela assinatura apontando para a tabela usuarios.
+  </div>
+
+  <h3>Bloco 3 — REST e HTTP</h3>
+
+  <div class="exam-box no-break">
+    <strong>Q: Quais os verbos HTTP usados na API e seus significados?</strong>
+    GET (buscar/listar), POST (criar → retorna 201 Created), PUT (atualizar completamente → retorna 200 OK), DELETE (remover → retorna 204 No Content).
+  </div>
+
+  <div class="exam-box no-break">
+    <strong>Q: Para que serve o ResponseEntity?</strong>
+    Permite controlar a resposta HTTP completa: status code, headers e body. Ex: <code>ResponseEntity.created(uri).body(dto)</code> retorna 201 com o header Location preenchido.
+  </div>
+
+  <div class="exam-box no-break">
+    <strong>Q: Qual a diferença entre @PathVariable e @RequestParam?</strong>
+    @PathVariable extrai um segmento da URL: <code>/usuarios/{id}</code> → <code>@PathVariable Long id</code>. @RequestParam extrai da query string: <code>/conteudos/buscar?termo=acao</code> → <code>@RequestParam String termo</code>.
+  </div>
+
+  <h3>Bloco 4 — Validação e Exceções</h3>
+
+  <div class="exam-box no-break">
+    <strong>Q: Como funciona o @Valid nos controllers?</strong>
+    Quando @Valid é colocado antes de um @RequestBody, o Spring valida automaticamente o objeto recebido usando as anotações do Bean Validation (@NotBlank, @Email etc.). Se alguma validação falhar, lança MethodArgumentNotValidException, capturada pelo GlobalExceptionHandler que retorna 400.
+  </div>
+
+  <div class="exam-box no-break">
+    <strong>Q: O que é @RestControllerAdvice e por que é importante?</strong>
+    É uma classe que intercepta exceções lançadas por qualquer controller. Centraliza o tratamento de erros: em vez de try/catch em cada método, todas as exceções são tratadas em um único lugar, garantindo respostas padronizadas e consistentes.
+  </div>
+
+  <div class="exam-box no-break">
+    <strong>Q: Como criar uma anotação de validação customizada?</strong>
+    São necessários 2 elementos: (1) uma anotação com @Constraint(validatedBy=MinhaClasse.class) e os atributos obrigatórios message(), groups() e payload(), e (2) uma classe que implementa ConstraintValidator&lt;MinhaAnotacao, TipoDoValor&gt; com o método isValid().
+  </div>
+
+  <h3>Bloco 5 — Integrações e Configurações</h3>
+
+  <div class="exam-box no-break">
+    <strong>Q: Qual a diferença entre OpenFeign e RestTemplate?</strong>
+    OpenFeign é declarativo: você define uma interface e o Spring cria a implementação. RestTemplate é imperativo: você chama métodos explicitamente passando a URL. Feign é mais moderno, menos verboso e ideal para múltiplos endpoints. RestTemplate é mais simples para casos pontuais.
+  </div>
+
+  <div class="exam-box no-break">
+    <strong>Q: Por que usar BCrypt para senhas e não MD5 ou SHA-1?</strong>
+    BCrypt é lento por design (fator de custo), gera um salt único para cada hash tornando inviável rainbow tables, e é unidirecional. MD5 e SHA-1 são rápidos demais (facilitam ataques de força bruta) e não incluem salt automático.
+  </div>
+
+  <div class="exam-box no-break">
+    <strong>Q: Para que serve o Correlation-ID?</strong>
+    Para rastrear o fluxo completo de uma requisição nos logs. Um UUID é gerado no filtro, injetado no MDC (Mapped Diagnostic Context) e aparece em todas as linhas de log daquela requisição. Facilita a depuração quando várias requisições ocorrem simultaneamente.
+  </div>
+
+  <div class="exam-box no-break">
+    <strong>Q: O que é DTO e por que não expor diretamente a Entity na API?</strong>
+    DTO (Data Transfer Object) é um objeto que carrega apenas os dados necessários para uma operação. Expor a Entity diretamente criaria acoplamento entre o banco e a API, poderia vazar campos sensíveis (senhaHash) e tornaria impossível ter formatos diferentes para entrada e saída.
+  </div>
+
+  <div class="exam-box no-break">
+    <strong>Q: O que o Lombok gera com @Data?</strong>
+    Getters e setters para todos os campos, equals() e hashCode() baseados em todos os campos, toString() e o construtor padrão (sem parâmetros, caso não haja @NoArgsConstructor). Tudo gerado em tempo de compilação, sem custo em runtime.
+  </div>
+
+  <div class="page-footer">IESPFLIX · Guia de Estudo · Capítulo 18 · FIM</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ RODAPÉ FINAL -->
+<div style="background: linear-gradient(135deg, #0f3460, #16213e); color: white; text-align:center; padding: 40px; margin-top: 30px;">
+  <h2 style="color:#e94560; font-size:1.5em;">IESPFLIX · Backend Java Spring Boot</h2>
+  <p style="color:#aaa; margin-top:10px;">UNIESP · Sistemas para Internet · 2025/2026</p>
+  <p style="color:#aaa; font-size:0.85em; margin-top:5px;">Disciplina: Tecnologias para Backend (Spring Boot) — Prof. Rodrigo Fujioka</p>
+  <p style="color:#e94560; font-size:0.9em; margin-top:20px;">Bons estudos!</p>
+</div>
+
+</body>
+</html>
