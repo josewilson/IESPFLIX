@@ -52,7 +52,7 @@ O **IESPFLIX** é um backend completo para uma plataforma de streaming fictícia
 | Hibernate | - | Implementação JPA |
 | H2 Database | - | Banco em arquivo (desenvolvimento) |
 | Lombok | 1.18.32 | Redução de boilerplate |
-| SpringDoc OpenAPI | 2.8.6 | Documentação Swagger |
+| SpringDoc OpenAPI | 2.8.8 | Documentação Swagger |
 | OpenFeign | - | Client HTTP declarativo (ViaCEP) |
 | Spring Security Crypto | - | BCrypt para hash de senhas |
 | JaCoCo | 0.8.11 | Cobertura de testes |
@@ -251,6 +251,27 @@ http://localhost:8080/h2
 | Logs com `@Slf4j` e rastreabilidade por UUID | ✅ |
 | Paginação com `Page<T>` e `Pageable` | ✅ |
 | Tratamento global de exceções centralizado | ✅ |
+
+---
+
+## 📊 Status do projeto
+
+Última atualização: 2026-06-05
+
+| Módulo | Status |
+|--------|--------|
+| Usuários | ✓ |
+| Conteúdos | ✓ |
+| Filmes | ✓ |
+| Favoritos | ✓ |
+| Planos e Assinaturas | ✓ |
+| Métodos de Pagamento | ✓ |
+| Funcionários | ✓ |
+| Integrações externas (ViaCEP + BrasilAPI) | ✓ |
+| Swagger / OpenAPI | ✓ |
+| Logs e Infraestrutura (MDC + CorrelationId) | ✓ |
+| Tratamento global de exceções | ✓ |
+| Validador customizado @CpfCnpj | ✓ |
 
 ---
 
