@@ -28,17 +28,41 @@
 
 ## 📋 Sobre o Projeto
 
-O **IESPFLIX** é um backend completo para uma plataforma de streaming fictícia. Ele gerencia usuários, conteúdos, filmes, assinaturas, planos, favoritos, métodos de pagamento e funcionários, seguindo boas práticas de desenvolvimento Java com arquitetura em camadas, validações customizadas, logs rastreáveis e integração com APIs externas.
+O **IESPFLIX** é um backend completo para uma plataforma de streaming fictícia. Ele gerencia usuários, conteúdos, filmes, assinaturas, planos, favoritos, histórico de reprodução, métodos de pagamento e funcionários, seguindo boas práticas de desenvolvimento Java com arquitetura em camadas, validações customizadas, logs rastreáveis e integração com APIs externas.
 
 ### ✨ Destaques
 
-- 🔐 **Segurança** — senhas protegidas com BCrypt (hash unidirecional com salt)
-- ✅ **Validação customizada** — `@CpfCnpj` com algoritmo de dígitos verificadores
-- 📄 **Paginação** — retorno paginado com metadados em `/usuarios` e `/conteudos`
-- 🔍 **Rastreabilidade** — UUID por requisição via `CorrelationIdFilter` + MDC
-- 🌐 **Integrações externas** — ViaCEP (Feign) e BrasilAPI (RestTemplate)
-- ⚠️ **Tratamento de erros** — `GlobalExceptionHandler` com respostas padronizadas
-- 📚 **Documentação** — Swagger UI gerado automaticamente pelo SpringDoc
+- 🔐 **Segurança — senhas com BCrypt**
+  - Classe: `AppConfig` declara o bean `BCryptPasswordEncoder`
+  - Classe: `UsuarioService` usa o encoder ao criar e atualizar usuários
+  - Hash unidirecional com salt — a senha nunca é armazenada em texto puro
+
+- ✅ **Validação customizada — `@CpfCnpj`**
+  - Anotação: `validation/CpfCnpj.java`
+  - Lógica: `validation/CpfCnpjValidator.java` — algoritmo completo de dígitos verificadores
+  - Aplicada em `UsuarioRequestDTO.cpfCnpj`
+
+- 📄 **Paginação com metadados**
+  - `UsuarioController` e `ConteudoController` recebem `Pageable` e retornam `Page<T>`
+  - `UsuarioService.listar(Pageable)` e `ConteudoService.listar(Pageable)`
+
+- 🔍 **Rastreabilidade por requisição**
+  - Filtro: `filter/CorrelationIdFilter.java` — gera UUID por requisição e insere no MDC
+  - Todos os logs de `@Slf4j` nos services carregam o `correlationId` automaticamente
+
+- 🌐 **Integrações externas**
+  - ViaCEP via Feign: `client/ViaCepClient.java` + `EnderecoController` + `ViaCepResponseDTO`
+  - BrasilAPI via RestTemplate: `service/externo/BrasilApiService.java` + `FeriadoController` + `dto/externo/FeriadoResponse.java`
+  - `AppConfig` declara o bean `RestTemplate` usado por `BrasilApiService`
+
+- ⚠️ **Tratamento centralizado de erros**
+  - Classe: `exception/GlobalExceptionHandler.java` (`@RestControllerAdvice`)
+  - Cobre 6 cenários: validação (400) · negócio customizado (400) · JSON malformado (400) · entidade não encontrada (404) · rota inexistente (404) · conflito de integridade (409) · erro interno (500)
+  - Exceção customizada: `exception/CustomBeanException.java`
+
+- 📚 **Documentação automática — Swagger**
+  - Configuração: `config/OpenApiConfig.java`
+  - Gerado pelo SpringDoc 2.8.8 · acesso em `/swagger-ui.html`
 
 ---
 
@@ -48,74 +72,205 @@ O **IESPFLIX** é um backend completo para uma plataforma de streaming fictícia
 |------------|--------|------------|
 | Java | 21 | Linguagem principal |
 | Spring Boot | 3.5.10 | Framework base |
-| Spring Data JPA | - | ORM e acesso ao banco |
-| Hibernate | - | Implementação JPA |
-| H2 Database | - | Banco em arquivo (desenvolvimento) |
+| Spring Data JPA | — | ORM e acesso ao banco |
+| Hibernate | — | Implementação JPA |
+| H2 Database | — | Banco em arquivo (desenvolvimento) |
 | Lombok | 1.18.32 | Redução de boilerplate |
 | SpringDoc OpenAPI | 2.8.8 | Documentação Swagger |
-| OpenFeign | - | Client HTTP declarativo (ViaCEP) |
-| Spring Security Crypto | - | BCrypt para hash de senhas |
+| OpenFeign | — | Client HTTP declarativo (ViaCEP) |
+| Spring Security Crypto | — | BCrypt para hash de senhas |
 | JaCoCo | 0.8.11 | Cobertura de testes |
 
 ---
 
-## 📁 Arquitetura
-
-O projeto segue arquitetura em camadas com separação clara de responsabilidades:
+## 📁 Estrutura de Pacotes
 
 ```
 br.uniesp.si.techback/
-├── TechbackApplication.java     ← ponto de entrada (@SpringBootApplication)
 │
-├── client/                      ← clientes HTTP externos (Feign)
-│   └── ViaCepClient.java
+├── TechbackApplication.java          ← @SpringBootApplication · ponto de entrada
 │
-├── config/                      ← Beans globais e configurações
-│   ├── AppConfig.java           ← BCryptPasswordEncoder + RestTemplate
-│   └── OpenApiConfig.java       ← configuração Swagger
+├── client/
+│   └── ViaCepClient.java             ← @FeignClient · consulta endereço por CEP
 │
-├── controller/                  ← camada HTTP · recebe e responde requisições
+├── config/
+│   ├── AppConfig.java                ← @Bean BCryptPasswordEncoder + RestTemplate
+│   └── OpenApiConfig.java            ← configuração título/versão do Swagger
 │
-├── dto/                         ← objetos de transferência (Request / Response)
-│   └── externo/                 ← DTOs de APIs de terceiros
+├── controller/
+│   ├── AssinaturaController.java
+│   ├── ConteudoController.java
+│   ├── EnderecoController.java       ← usa ViaCepClient via EnderecoService
+│   ├── FavoritoController.java
+│   ├── FeriadoController.java        ← usa BrasilApiService
+│   ├── FilmeController.java
+│   ├── FuncionarioController.java
+│   ├── HistoricoController.java
+│   ├── MetodoPagamentoController.java
+│   ├── PlanoController.java
+│   └── UsuarioController.java
 │
-├── exception/                   ← tratamento centralizado de erros
-│   ├── GlobalExceptionHandler.java
-│   └── CustomBeanException.java
+├── dto/
+│   ├── AssinaturaRequestDTO.java / AssinaturaResponseDTO.java
+│   ├── ConteudoRequestDTO.java / ConteudoResponseDTO.java
+│   ├── FavoritoRequestDTO.java / FavoritoResponseDTO.java
+│   ├── FilmeDTO.java
+│   ├── HistoricoRequestDTO.java / HistoricoResponseDTO.java
+│   ├── MetodoPagamentoRequestDTO.java / MetodoPagamentoResponseDTO.java
+│   ├── PlanoRequestDTO.java / PlanoResponseDTO.java
+│   ├── UsuarioRequestDTO.java / UsuarioResponseDTO.java
+│   ├── ViaCepResponseDTO.java
+│   └── externo/
+│       └── FeriadoResponse.java      ← DTO de resposta da BrasilAPI
 │
-├── filter/                      ← filtros HTTP (executados antes dos controllers)
-│   └── CorrelationIdFilter.java ← UUID por requisição via MDC
+├── exception/
+│   ├── GlobalExceptionHandler.java   ← @RestControllerAdvice · 6 handlers
+│   └── CustomBeanException.java      ← exceção de negócio (400)
 │
-├── mapper/                      ← conversão Entity ↔ DTO
+├── filter/
+│   └── CorrelationIdFilter.java      ← OncePerRequestFilter · UUID no MDC
 │
-├── model/                       ← entidades JPA (tabelas do banco)
+├── mapper/
+│   ├── ConteudoMapper.java
+│   ├── FavoritoMapper.java
+│   ├── FilmeMapper.java
+│   ├── HistoricoMapper.java
+│   └── UsuarioMapper.java
 │
-├── repository/                  ← Spring Data JPA + queries JPQL
+├── model/
+│   ├── Assinatura.java               ← FK: usuario_id, plano_id
+│   ├── Conteudo.java
+│   ├── Favorito.java                 ← FK: usuario_id, conteudo_id
+│   ├── Filme.java
+│   ├── Funcionario.java
+│   ├── Historico.java                ← FK: usuario_id, conteudo_id
+│   ├── MetodoPagamento.java          ← FK: usuario_id
+│   ├── Plano.java
+│   └── Usuario.java
 │
-├── service/                     ← lógica de negócio
-│   └── externo/                 ← integrações com APIs externas
+├── repository/
+│   ├── AssinaturaRepository.java     ← derived query: findByUsuarioId
+│   ├── ConteudoRepository.java       ← @Query JPQL: gênero, top, busca, ano
+│   ├── FavoritoRepository.java       ← @Query JPQL: recentes por usuário
+│   ├── FilmeRepository.java          ← @Query JPQL: ordenado por título
+│   ├── FuncionarioRepository.java
+│   ├── HistoricoRepository.java      ← @Query JPQL: por usuário / concluídos
+│   ├── MetodoPagamentoRepository.java← @Query JPQL: por usuário ordenado
+│   ├── PlanoRepository.java
+│   └── UsuarioRepository.java        ← @Query JPQL: busca por email
 │
-└── validation/                  ← validações customizadas Bean Validation
-    ├── CpfCnpj.java             ← anotação @CpfCnpj
-    └── CpfCnpjValidator.java    ← algoritmo de dígitos verificadores
+├── service/
+│   ├── AssinaturaService.java
+│   ├── ConteudoService.java
+│   ├── FavoritoService.java
+│   ├── FilmeService.java
+│   ├── FuncionarioService.java
+│   ├── HistoricoService.java
+│   ├── MetodoPagamentoService.java
+│   ├── PlanoService.java
+│   ├── UsuarioService.java           ← usa BCryptPasswordEncoder
+│   └── externo/
+│       └── BrasilApiService.java     ← RestTemplate · consulta feriados
+│
+└── validation/
+    ├── CpfCnpj.java                  ← anotação @CpfCnpj (Bean Validation)
+    └── CpfCnpjValidator.java         ← algoritmo de dígitos verificadores
 ```
 
-### Fluxo de uma requisição
+---
+
+## 🏛️ Arquitetura e Fluxo de Requisição
+
+### Fluxo padrão (exemplo: `POST /historicos`)
 
 ```
-Client (Swagger / Postman / React)
-    ↓
-CorrelationIdFilter  →  gera UUID e insere no MDC (aparece em todos os logs)
-    ↓
-Controller           →  valida DTO com @Valid · chama Service
-    ↓
-Service              →  aplica regras de negócio · usa Mapper e Repository
-    ↓
-Repository           →  persiste via JPA / executa JPQL personalizado
-    ↓
-H2 Database (arquivo ~/teckback20262)
+Cliente (Swagger / Postman / Frontend)
+    │
+    ▼
+CorrelationIdFilter
+    • gera UUID único para a requisição
+    • insere no MDC → aparece em TODOS os logs da cadeia
+    │
+    ▼
+HistoricoController  (@RestController · @RequestMapping("/historicos"))
+    • recebe o JSON no corpo da requisição
+    • @Valid dispara a validação do HistoricoRequestDTO
+      (@NotNull em usuarioId e conteudoId, @Min(0) em progressoSegundos)
+    • chama HistoricoService.registrar(dto)
+    │
+    ▼
+HistoricoService  (@Service · @RequiredArgsConstructor · @Slf4j)
+    • log.info com correlationId (via MDC)
+    • busca Usuario em UsuarioRepository.findById()
+      → lança EntityNotFoundException se não encontrado
+    • busca Conteudo em ConteudoRepository.findById()
+      → lança EntityNotFoundException se não encontrado
+    • monta Historico (entity) com Historico.builder()
+    • salva via HistoricoRepository.save(historico)
+    • converte resultado com HistoricoMapper.toResponseDTO()
+    │
+    ▼
+HistoricoRepository  (JpaRepository<Historico, Long>)
+    • Spring Data JPA gera o SQL INSERT automaticamente
+    • tabela "historico" com FK usuario_id e conteudo_id
+    │
+    ▼
+H2 Database  (arquivo ~/teckback20262)
+    │
+    ▼
+HistoricoController
+    • monta o header Location com o ID do recurso criado
+    • retorna HTTP 201 Created + HistoricoResponseDTO (JSON)
 
-Em caso de erro → GlobalExceptionHandler → JSON padronizado (400/404/409/500)
+Em caso de erro:
+    EntityNotFoundException  →  GlobalExceptionHandler  →  HTTP 404 JSON
+    MethodArgumentNotValidException  →  GlobalExceptionHandler  →  HTTP 400 JSON
+    HttpMessageNotReadableException  →  GlobalExceptionHandler  →  HTTP 400 JSON
+```
+
+### Fluxo de integração externa (exemplo: `GET /funcionarios` com ViaCEP)
+
+```
+Cliente
+    │
+    ▼
+CorrelationIdFilter  →  UUID no MDC
+    │
+    ▼
+FuncionarioController  →  @Valid em FuncionarioRequestDTO
+    │
+    ▼
+FuncionarioService
+    • chama ViaCepClient.buscarEndereco(cep)  (interface @FeignClient)
+    │
+    ▼
+ViaCepClient  (OpenFeign)
+    • HTTP GET https://viacep.com.br/ws/{cep}/json/
+    • desserializa resposta em ViaCepResponseDTO
+    │
+    ▼
+FuncionarioService  →  persiste via FuncionarioRepository
+    │
+    ▼
+H2 Database
+```
+
+### Fluxo de feriados (BrasilAPI via RestTemplate)
+
+```
+Cliente
+    │
+    ▼
+FeriadoController
+    │
+    ▼
+BrasilApiService  (@Service · @Slf4j)
+    • usa RestTemplate (bean de AppConfig)
+    • HTTP GET https://brasilapi.com.br/api/feriados/v1/{ano}
+    • desserializa em List<FeriadoResponse>  (dto/externo/FeriadoResponse.java)
+    │
+    ▼
+FeriadoController  →  retorna HTTP 200 + lista JSON
 ```
 
 ---
@@ -160,6 +315,14 @@ Em caso de erro → GlobalExceptionHandler → JSON padronizado (400/404/409/500
 | `POST` | `/favoritos` | Adicionar favorito |
 | `GET` | `/favoritos/usuario/{id}` | Favoritos recentes (JPQL ORDER BY data) |
 | `DELETE` | `/favoritos/{id}` | Remover · 204 |
+
+### 📼 Histórico de Reprodução
+| Método | Endpoint | Descrição |
+|--------|----------|-----------|
+| `POST` | `/historicos` | Registrar reprodução · 201 + Location |
+| `GET` | `/historicos/usuario/{id}` | Histórico completo do usuário (JPQL ORDER BY data) |
+| `GET` | `/historicos/usuario/{id}/concluidos` | Apenas conteúdos concluídos (JPQL) |
+| `DELETE` | `/historicos/{id}` | Remover entrada · 204 |
 
 ### 📦 Planos
 | Método | Endpoint | Descrição |
@@ -256,22 +419,24 @@ http://localhost:8080/h2
 
 ## 📊 Status do projeto
 
-Última atualização: 2026-06-05
+Última atualização: 2026-06-09
 
-| Módulo | Status |
-|--------|--------|
-| Usuários | ✓ |
-| Conteúdos | ✓ |
-| Filmes | ✓ |
-| Favoritos | ✓ |
-| Planos e Assinaturas | ✓ |
-| Métodos de Pagamento | ✓ |
-| Funcionários | ✓ |
-| Integrações externas (ViaCEP + BrasilAPI) | ✓ |
-| Swagger / OpenAPI | ✓ |
-| Logs e Infraestrutura (MDC + CorrelationId) | ✓ |
-| Tratamento global de exceções | ✓ |
-| Validador customizado @CpfCnpj | ✓ |
+| Módulo | Classes principais | Status |
+|--------|-------------------|--------|
+| Usuários | `UsuarioController` · `UsuarioService` · `UsuarioRepository` · `UsuarioMapper` | ✓ |
+| Conteúdos | `ConteudoController` · `ConteudoService` · `ConteudoRepository` · `ConteudoMapper` | ✓ |
+| Filmes | `FilmeController` · `FilmeService` · `FilmeRepository` · `FilmeMapper` | ✓ |
+| Favoritos | `FavoritoController` · `FavoritoService` · `FavoritoRepository` · `FavoritoMapper` | ✓ |
+| Histórico | `HistoricoController` · `HistoricoService` · `HistoricoRepository` · `HistoricoMapper` | ✓ |
+| Planos e Assinaturas | `PlanoController` · `AssinaturaController` · services e repositories | ✓ |
+| Métodos de Pagamento | `MetodoPagamentoController` · `MetodoPagamentoService` · `MetodoPagamentoRepository` | ✓ |
+| Funcionários | `FuncionarioController` · `FuncionarioService` · `FuncionarioRepository` | ✓ |
+| Integração ViaCEP | `ViaCepClient` · `EnderecoController` · `ViaCepResponseDTO` | ✓ |
+| Integração BrasilAPI | `BrasilApiService` · `FeriadoController` · `FeriadoResponse` | ✓ |
+| Swagger / OpenAPI | `OpenApiConfig` · SpringDoc 2.8.8 | ✓ |
+| Logs e Rastreabilidade | `CorrelationIdFilter` · MDC · `@Slf4j` em todos os services | ✓ |
+| Tratamento de Exceções | `GlobalExceptionHandler` · `CustomBeanException` | ✓ |
+| Validador customizado | `CpfCnpj` · `CpfCnpjValidator` | ✓ |
 
 ---
 
