@@ -85,96 +85,350 @@ O **IESPFLIX** é um backend completo para uma plataforma de streaming fictícia
 
 ## 📁 Estrutura de Pacotes
 
+> Legenda: **consome →** classes/beans que a classe injeta ou usa · **valida com →** anotações Bean Validation aplicadas nos campos
+
 ```
 br.uniesp.si.techback/
 │
-├── TechbackApplication.java          ← @SpringBootApplication · ponto de entrada
+├── TechbackApplication.java
+│     Ponto de entrada da aplicação. @SpringBootApplication habilita
+│     auto-configuração, component scan e @EnableFeignClients.
+│
 │
 ├── client/
-│   └── ViaCepClient.java             ← @FeignClient · consulta endereço por CEP
+│   └── ViaCepClient.java
+│         Interface @FeignClient que declara a chamada HTTP GET para a
+│         API ViaCEP. Spring gera a implementação em runtime.
+│         Retorna: ViaCepResponseDTO
+│         Consumida por: FuncionarioService, EnderecoController
+│
 │
 ├── config/
-│   ├── AppConfig.java                ← @Bean BCryptPasswordEncoder + RestTemplate
-│   └── OpenApiConfig.java            ← configuração título/versão do Swagger
+│   ├── AppConfig.java
+│   │     @Configuration · declara dois @Bean disponíveis em todo o contexto:
+│   │     • BCryptPasswordEncoder  → injetado em UsuarioService
+│   │     • RestTemplate           → injetado em BrasilApiService
+│   │
+│   └── OpenApiConfig.java
+│         @Configuration · declara @Bean OpenAPI com título, descrição e
+│         versão do Swagger. Consumido pelo SpringDoc para montar /swagger-ui.html.
 │
-├── controller/
-│   ├── AssinaturaController.java
+│
+├── controller/                    (todos anotados com @RestController + @RequiredArgsConstructor)
+│   │
+│   ├── UsuarioController.java
+│   │     @RequestMapping("/usuarios") · CRUD completo + paginação.
+│   │     Usa @Valid nos métodos POST e PUT → dispara validação do UsuarioRequestDTO.
+│   │     consome → UsuarioService
+│   │     retorna → UsuarioResponseDTO, Page<UsuarioResponseDTO>
+│   │
 │   ├── ConteudoController.java
-│   ├── EnderecoController.java       ← usa ViaCepClient via EnderecoService
-│   ├── FavoritoController.java
-│   ├── FeriadoController.java        ← usa BrasilApiService
+│   │     @RequestMapping("/conteudos") · CRUD + 4 filtros avançados.
+│   │     Usa @Valid nos métodos POST e PUT → dispara validação do ConteudoRequestDTO.
+│   │     consome → ConteudoService
+│   │     retorna → ConteudoResponseDTO, Page<ConteudoResponseDTO>
+│   │
 │   ├── FilmeController.java
-│   ├── FuncionarioController.java
+│   │     @RequestMapping("/filmes") · CRUD + listagem ordenada.
+│   │     Usa @Valid nos métodos POST e PUT → dispara validação do FilmeDTO.
+│   │     Possui @Slf4j próprio (logs de cada operação no controller).
+│   │     consome → FilmeService
+│   │     retorna → FilmeDTO
+│   │
+│   ├── FavoritoController.java
+│   │     @RequestMapping("/favoritos") · adicionar / listar / remover.
+│   │     Não usa @Valid (FavoritoRequestDTO não tem constraints Bean Validation).
+│   │     consome → FavoritoService
+│   │     retorna → FavoritoResponseDTO
+│   │
 │   ├── HistoricoController.java
-│   ├── MetodoPagamentoController.java
+│   │     @RequestMapping("/historicos") · registrar / listar / concluídos / remover.
+│   │     Usa @Valid no POST → dispara validação do HistoricoRequestDTO.
+│   │     consome → HistoricoService
+│   │     retorna → HistoricoResponseDTO
+│   │
+│   ├── AssinaturaController.java
+│   │     @RequestMapping("/assinaturas") · criar / listar por usuário / cancelar.
+│   │     Não usa @Valid (AssinaturaRequestDTO não tem constraints Bean Validation).
+│   │     consome → AssinaturaService
+│   │     retorna → AssinaturaResponseDTO
+│   │
 │   ├── PlanoController.java
-│   └── UsuarioController.java
+│   │     @RequestMapping("/planos") · criar / listar.
+│   │     Não usa @Valid (PlanoRequestDTO não tem constraints Bean Validation).
+│   │     consome → PlanoService
+│   │     retorna → PlanoResponseDTO
+│   │
+│   ├── MetodoPagamentoController.java
+│   │     @RequestMapping("/metodos-pagamento") · criar / listar / remover.
+│   │     Usa @Valid no POST → dispara validação do MetodoPagamentoRequestDTO.
+│   │     consome → MetodoPagamentoService
+│   │     retorna → MetodoPagamentoResponseDTO
+│   │
+│   ├── FuncionarioController.java
+│   │     @RequestMapping("/funcionarios") · listar / incluir.
+│   │     Usa @Valid no POST → dispara validação direta na entidade Funcionario.
+│   │     consome → FuncionarioService
+│   │     retorna → Funcionario (entidade diretamente, sem DTO)
+│   │
+│   ├── EnderecoController.java
+│   │     @RequestMapping("/enderecos") · busca CEP.
+│   │     Valida tamanho do CEP manualmente (8 dígitos); lança CustomBeanException
+│   │     se inválido → capturado pelo GlobalExceptionHandler → HTTP 400.
+│   │     consome → ViaCepClient (diretamente, sem service intermediário)
+│   │     retorna → ViaCepResponseDTO
+│   │
+│   └── FeriadoController.java
+│         @RequestMapping("/feriados") · lista feriados por ano.
+│         consome → BrasilApiService
+│         retorna → List<FeriadoResponse>
+│
 │
 ├── dto/
-│   ├── AssinaturaRequestDTO.java / AssinaturaResponseDTO.java
-│   ├── ConteudoRequestDTO.java / ConteudoResponseDTO.java
-│   ├── FavoritoRequestDTO.java / FavoritoResponseDTO.java
+│   │  (todos com @Data @Builder @NoArgsConstructor @AllArgsConstructor via Lombok)
+│   │
+│   ├── UsuarioRequestDTO.java
+│   │     valida com → @NotBlank (nome, email, senha)
+│   │                   @Email (email)
+│   │                   @Size(min=8) (senha)
+│   │                   @CpfCnpj (cpfCnpj) ← validador customizado
+│   │                   @Past (dataNascimento)
+│   │     consumido por → UsuarioController (@Valid), UsuarioService
+│   │
+│   ├── UsuarioResponseDTO.java
+│   │     Sem validações — apenas saída. Produzido por UsuarioMapper.
+│   │
+│   ├── ConteudoRequestDTO.java
+│   │     valida com → @NotBlank (titulo)
+│   │                   @Min(1888) @Max(2100) (ano)
+│   │                   @Positive (duracaoMinutos)
+│   │                   @DecimalMin("0.0") @DecimalMax("10.0") (relevancia)
+│   │     consumido por → ConteudoController (@Valid), ConteudoService, ConteudoMapper
+│   │
+│   ├── ConteudoResponseDTO.java
+│   │     Sem validações — apenas saída. Produzido por ConteudoMapper.
+│   │
 │   ├── FilmeDTO.java
-│   ├── HistoricoRequestDTO.java / HistoricoResponseDTO.java
-│   ├── MetodoPagamentoRequestDTO.java / MetodoPagamentoResponseDTO.java
-│   ├── PlanoRequestDTO.java / PlanoResponseDTO.java
-│   ├── UsuarioRequestDTO.java / UsuarioResponseDTO.java
+│   │     valida com → @NotBlank (titulo)
+│   │     consumido por → FilmeController (@Valid), FilmeService, FilmeMapper
+│   │
+│   ├── FavoritoRequestDTO.java
+│   │     Sem validações Bean Validation. Campos: usuarioId, conteudoId.
+│   │     consumido por → FavoritoController, FavoritoService
+│   │
+│   ├── FavoritoResponseDTO.java
+│   │     Sem validações — apenas saída. Produzido por FavoritoMapper.
+│   │
+│   ├── HistoricoRequestDTO.java
+│   │     valida com → @NotNull (usuarioId, conteudoId)
+│   │                   @Min(0) (progressoSegundos)
+│   │     consumido por → HistoricoController (@Valid), HistoricoService
+│   │
+│   ├── HistoricoResponseDTO.java
+│   │     Sem validações — apenas saída. Produzido por HistoricoMapper.
+│   │
+│   ├── AssinaturaRequestDTO.java
+│   │     Sem validações Bean Validation. Campos: usuarioId, planoId, datas.
+│   │     consumido por → AssinaturaController, AssinaturaService
+│   │
+│   ├── AssinaturaResponseDTO.java
+│   │     Sem validações — apenas saída. Produzido por AssinaturaService (inline).
+│   │
+│   ├── PlanoRequestDTO.java
+│   │     Sem validações Bean Validation. Campos: nome, descricao, preco, limite.
+│   │     consumido por → PlanoController, PlanoService
+│   │
+│   ├── PlanoResponseDTO.java
+│   │     Sem validações — apenas saída. Produzido por PlanoService (inline).
+│   │
+│   ├── MetodoPagamentoRequestDTO.java
+│   │     valida com → @NotNull (usuarioId, principal)
+│   │                   @NotBlank (tipo, tokenizado)
+│   │     consumido por → MetodoPagamentoController (@Valid), MetodoPagamentoService
+│   │
+│   ├── MetodoPagamentoResponseDTO.java
+│   │     Sem validações — apenas saída. Produzido por MetodoPagamentoService (inline).
+│   │
 │   ├── ViaCepResponseDTO.java
+│   │     Sem validações — DTO de entrada de API externa.
+│   │     consumido por → ViaCepClient (desserialização), FuncionarioService, EnderecoController
+│   │
 │   └── externo/
-│       └── FeriadoResponse.java      ← DTO de resposta da BrasilAPI
+│       └── FeriadoResponse.java
+│             Sem validações — DTO de entrada da BrasilAPI.
+│             consumido por → BrasilApiService (desserialização), FeriadoController
+│
 │
 ├── exception/
-│   ├── GlobalExceptionHandler.java   ← @RestControllerAdvice · 6 handlers
-│   └── CustomBeanException.java      ← exceção de negócio (400)
+│   ├── GlobalExceptionHandler.java
+│   │     @RestControllerAdvice @Slf4j · intercepta exceções lançadas em qualquer
+│   │     controller e retorna JSON padronizado com timestamp, status, message e path.
+│   │     Trata 6 tipos:
+│   │     • MethodArgumentNotValidException  → HTTP 400 (Bean Validation falhou)
+│   │     • CustomBeanException              → HTTP 400 (regra de negócio)
+│   │     • HttpMessageNotReadableException  → HTTP 400 (JSON malformado)
+│   │     • EntityNotFoundException          → HTTP 404 (registro não encontrado)
+│   │     • NoResourceFoundException         → HTTP 404 (rota não existe)
+│   │     • DataIntegrityViolationException  → HTTP 409 (duplicidade no banco)
+│   │     • Exception (fallback)             → HTTP 500
+│   │
+│   └── CustomBeanException.java
+│         RuntimeException simples com mensagem customizável.
+│         Lançada por: EnderecoController, FuncionarioService
+│         Capturada por: GlobalExceptionHandler → HTTP 400
+│
 │
 ├── filter/
-│   └── CorrelationIdFilter.java      ← OncePerRequestFilter · UUID no MDC
+│   └── CorrelationIdFilter.java
+│         Implementa Filter (@Component) · executado antes de todo controller.
+│         Gera UUID único por requisição e insere no MDC com a chave "correlationId".
+│         Todos os logs @Slf4j dos services incluem esse valor automaticamente.
+│         Remove do MDC no bloco finally (evita vazamento entre threads).
 │
-├── mapper/
+│
+├── mapper/                        (todos @Component · injetados nos services)
+│   ├── UsuarioMapper.java
+│   │     toEntity(UsuarioRequestDTO) → Usuario
+│   │     toResponseDTO(Usuario)      → UsuarioResponseDTO
+│   │     consumido por → UsuarioService
+│   │
 │   ├── ConteudoMapper.java
-│   ├── FavoritoMapper.java
+│   │     toEntity(ConteudoRequestDTO) → Conteudo
+│   │     toResponseDTO(Conteudo)      → ConteudoResponseDTO
+│   │     consumido por → ConteudoService
+│   │
 │   ├── FilmeMapper.java
-│   ├── HistoricoMapper.java
-│   └── UsuarioMapper.java
+│   │     toEntity(FilmeDTO) → Filme
+│   │     toDTO(Filme)       → FilmeDTO
+│   │     consumido por → FilmeService
+│   │
+│   ├── FavoritoMapper.java
+│   │     toResponseDTO(Favorito) → FavoritoResponseDTO
+│   │     consumido por → FavoritoService
+│   │
+│   └── HistoricoMapper.java
+│         toResponseDTO(Historico) → HistoricoResponseDTO
+│         consumido por → HistoricoService
 │
-├── model/
-│   ├── Assinatura.java               ← FK: usuario_id, plano_id
-│   ├── Conteudo.java
-│   ├── Favorito.java                 ← FK: usuario_id, conteudo_id
-│   ├── Filme.java
-│   ├── Funcionario.java
-│   ├── Historico.java                ← FK: usuario_id, conteudo_id
-│   ├── MetodoPagamento.java          ← FK: usuario_id
-│   ├── Plano.java
-│   └── Usuario.java
 │
-├── repository/
-│   ├── AssinaturaRepository.java     ← derived query: findByUsuarioId
-│   ├── ConteudoRepository.java       ← @Query JPQL: gênero, top, busca, ano
-│   ├── FavoritoRepository.java       ← @Query JPQL: recentes por usuário
-│   ├── FilmeRepository.java          ← @Query JPQL: ordenado por título
-│   ├── FuncionarioRepository.java
-│   ├── HistoricoRepository.java      ← @Query JPQL: por usuário / concluídos
-│   ├── MetodoPagamentoRepository.java← @Query JPQL: por usuário ordenado
+├── model/                         (todos @Entity @Data @Builder @NoArgsConstructor @AllArgsConstructor)
+│   ├── Usuario.java               tabela "usuarios" · campos com @NotBlank @Email @Past
+│   ├── Conteudo.java              tabela "conteudo"
+│   ├── Filme.java                 tabela "filmes" · @NotBlank(titulo) @Column(length=100)
+│   ├── Favorito.java              tabela "favorito" · @ManyToOne usuario + conteudo · @CreationTimestamp
+│   ├── Historico.java             tabela "historico" · @ManyToOne usuario + conteudo · @CreationTimestamp
+│   ├── Assinatura.java            tabela "assinatura" · @ManyToOne usuario + plano
+│   ├── MetodoPagamento.java       tabela "metodo_pagamento" · @ManyToOne usuario
+│   ├── Plano.java                 tabela "plano"
+│   └── Funcionario.java           tabela "funcionarios" · campos de endereço preenchidos via ViaCEP
+│
+│
+├── repository/                    (todos extends JpaRepository<Entidade, Long> @Repository)
+│   ├── UsuarioRepository.java
+│   │     @Query JPQL: findByEmail(email) → Optional<Usuario>
+│   │     consumido por → UsuarioService, AssinaturaService, FavoritoService,
+│   │                      HistoricoService, MetodoPagamentoService
+│   │
+│   ├── ConteudoRepository.java
+│   │     @Query JPQL (4): findByGeneroCaseInsensitive · findTopByRelevancia
+│   │                       buscarPorTermo (LIKE) · findLancadosApos
+│   │     consumido por → ConteudoService, FavoritoService, HistoricoService
+│   │
+│   ├── FilmeRepository.java
+│   │     @Query JPQL (1): listarOrdenado (ORDER BY titulo)
+│   │     consumido por → FilmeService
+│   │
+│   ├── FavoritoRepository.java
+│   │     @Query JPQL (1): findFavoritosRecentesPorUsuario (ORDER BY adicionadoEm DESC)
+│   │     consumido por → FavoritoService
+│   │
+│   ├── HistoricoRepository.java
+│   │     @Query JPQL (2): findByUsuarioIdOrderByAssistidoEmDesc
+│   │                       findConcluidosPorUsuario (WHERE concluido = true)
+│   │     consumido por → HistoricoService
+│   │
+│   ├── AssinaturaRepository.java
+│   │     derived query: findByUsuarioId(Long) → List<Assinatura>
+│   │     consumido por → AssinaturaService
+│   │
+│   ├── MetodoPagamentoRepository.java
+│   │     @Query JPQL (1): findByUsuarioId ordenado por principal DESC
+│   │     consumido por → MetodoPagamentoService
+│   │
 │   ├── PlanoRepository.java
-│   └── UsuarioRepository.java        ← @Query JPQL: busca por email
+│   │     Apenas métodos herdados do JpaRepository (findAll, save, findById).
+│   │     consumido por → PlanoService, AssinaturaService
+│   │
+│   └── FuncionarioRepository.java
+│         Apenas métodos herdados do JpaRepository.
+│         consumido por → FuncionarioService
 │
-├── service/
-│   ├── AssinaturaService.java
+│
+├── service/                       (todos @Service @RequiredArgsConstructor)
+│   ├── UsuarioService.java
+│   │     @Slf4j · @Transactional nos métodos de escrita.
+│   │     consome → UsuarioRepository · UsuarioMapper · BCryptPasswordEncoder (de AppConfig)
+│   │     lança → DataIntegrityViolationException (email duplicado) · EntityNotFoundException
+│   │
 │   ├── ConteudoService.java
-│   ├── FavoritoService.java
+│   │     @Slf4j · @Transactional nos métodos de escrita.
+│   │     consome → ConteudoRepository · ConteudoMapper
+│   │     lança → EntityNotFoundException
+│   │
 │   ├── FilmeService.java
-│   ├── FuncionarioService.java
+│   │     @Slf4j · @Transactional nos métodos de escrita.
+│   │     consome → FilmeRepository · FilmeMapper
+│   │     lança → EntityNotFoundException
+│   │
+│   ├── FavoritoService.java
+│   │     @Transactional nos métodos de escrita.
+│   │     consome → FavoritoRepository · UsuarioRepository · ConteudoRepository · FavoritoMapper
+│   │     lança → EntityNotFoundException
+│   │
 │   ├── HistoricoService.java
-│   ├── MetodoPagamentoService.java
+│   │     @Slf4j · @Transactional nos métodos de escrita.
+│   │     consome → HistoricoRepository · UsuarioRepository · ConteudoRepository · HistoricoMapper
+│   │     lança → EntityNotFoundException
+│   │
+│   ├── AssinaturaService.java
+│   │     @Transactional nos métodos de escrita.
+│   │     consome → AssinaturaRepository · UsuarioRepository · PlanoRepository
+│   │     lança → EntityNotFoundException
+│   │
 │   ├── PlanoService.java
-│   ├── UsuarioService.java           ← usa BCryptPasswordEncoder
+│   │     @Transactional nos métodos de escrita.
+│   │     consome → PlanoRepository
+│   │
+│   ├── MetodoPagamentoService.java
+│   │     @Slf4j · @Transactional nos métodos de escrita.
+│   │     consome → MetodoPagamentoRepository · UsuarioRepository
+│   │     lança → EntityNotFoundException
+│   │
+│   ├── FuncionarioService.java
+│   │     consome → FuncionarioRepository · ViaCepClient
+│   │     lança → CustomBeanException (CEP inválido retornado pela API)
+│   │
 │   └── externo/
-│       └── BrasilApiService.java     ← RestTemplate · consulta feriados
+│       └── BrasilApiService.java
+│             @Slf4j.
+│             consome → RestTemplate (bean de AppConfig)
+│             chama → https://brasilapi.com.br/api/feriados/v1/{ano}
+│             retorna → List<FeriadoResponse>
+│
 │
 └── validation/
-    ├── CpfCnpj.java                  ← anotação @CpfCnpj (Bean Validation)
-    └── CpfCnpjValidator.java         ← algoritmo de dígitos verificadores
+    ├── CpfCnpj.java
+    │     Anotação customizada Bean Validation (@Constraint).
+    │     Atributos obrigatórios: message, groups, payload.
+    │     Liga-se ao validador: @Constraint(validatedBy = CpfCnpjValidator.class)
+    │     Usada em: UsuarioRequestDTO.cpfCnpj
+    │
+    └── CpfCnpjValidator.java
+          Implementa ConstraintValidator<CpfCnpj, String>.
+          isValid(): aceita null (campo opcional), valida CPF de 11 dígitos
+          pelo algoritmo de dois dígitos verificadores, aceita CNPJ de 14 dígitos.
+          Acionado automaticamente pelo Bean Validation quando @Valid é processado
+          no UsuarioController (POST e PUT).
 ```
 
 ---
