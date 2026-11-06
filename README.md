@@ -694,6 +694,14 @@ http://localhost:8080/h2
 
 ---
 
+## 🧾 Origem e autoria
+
+- **Base da disciplina:** estrutura inicial do projeto (camadas controller → service → repository, módulos Filme/Funcionario, configuração do Maven e histórico inicial de commits) fornecida pelo Prof. **Rodrigo Fujioka** (Tecnologias para Backend – UNIESP).
+- **Trabalho da equipe:** cada integrante implementou o módulo indicado na tabela da seção [Equipe](#-equipe).
+- **José Wilson Alves de Souza:** líder técnico (coordenação de 5 pessoas); módulos **Usuários** (incl. validação `@CpfCnpj`) e **MetodoPagamento**; **Infraestrutura** (JWT, cache, Flyway/PostgreSQL, Docker, CI e testes de integração).
+
+---
+
 ## 👥 Equipe
 
 | Integrante | Responsabilidade |
