@@ -5,6 +5,8 @@ import br.uniesp.si.techback.dto.PlanoResponseDTO;
 import br.uniesp.si.techback.model.Plano;
 import br.uniesp.si.techback.repository.PlanoRepository;
 import jakarta.transaction.Transactional;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +20,7 @@ public class PlanoService {
     private final PlanoRepository planoRepository;
 
     @Transactional
+    @CacheEvict(value = "planos", allEntries = true)
     public PlanoResponseDTO criar(PlanoRequestDTO dto) {
         Plano plano = Plano.builder()
                 .nome(dto.getNome())
@@ -29,6 +32,7 @@ public class PlanoService {
         return toResponseDTO(salvo);
     }
 
+    @Cacheable("planos")
     public List<PlanoResponseDTO> listar() {
         return planoRepository.findAll().stream().map(this::toResponseDTO).collect(Collectors.toList());
     }
