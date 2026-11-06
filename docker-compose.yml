@@ -3,12 +3,34 @@ services:
     image: postgres:16-alpine
     container_name: postgres
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: iespflix
+      POSTGRES_USER: iespflix
+      POSTGRES_PASSWORD: iespflix
     ports:
       - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U iespflix -d iespflix"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    restart: unless-stopped
+
+  app:
+    build: .
+    container_name: iespflix-app
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DB_URL: jdbc:postgresql://postgres:5432/iespflix
+      DB_USER: iespflix
+      DB_PASSWORD: iespflix
+      # obrigatorio, minimo 32 caracteres: JWT_SECRET=... docker compose up --build
+      JWT_SECRET: ${JWT_SECRET:?defina JWT_SECRET com no minimo 32 caracteres}
+    ports:
+      - "8080:8080"
     restart: unless-stopped
 
 volumes:

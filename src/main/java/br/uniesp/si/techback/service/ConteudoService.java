@@ -7,6 +7,8 @@ import br.uniesp.si.techback.model.Conteudo;
 import br.uniesp.si.techback.repository.ConteudoRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -35,6 +37,7 @@ public class ConteudoService {
         return conteudoRepository.findAll(pageable).map(conteudoMapper::toResponseDTO);
     }
 
+    @Cacheable(value = "conteudos", key = "#id")
     public ConteudoResponseDTO buscarPorId(Long id) {
         Conteudo conteudo = conteudoRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Conteúdo não encontrado com ID: " + id));
@@ -42,6 +45,7 @@ public class ConteudoService {
     }
 
     @Transactional
+    @CacheEvict(value = "conteudos", key = "#id")
     public ConteudoResponseDTO atualizar(Long id, ConteudoRequestDTO dto) {
         log.info("Atualizando conteúdo ID: {}", id);
         conteudoRepository.findById(id)
@@ -52,6 +56,7 @@ public class ConteudoService {
     }
 
     @Transactional
+    @CacheEvict(value = "conteudos", key = "#id")
     public void deletar(Long id) {
         if (!conteudoRepository.existsById(id)) {
             throw new EntityNotFoundException("Conteúdo não encontrado com ID: " + id);
