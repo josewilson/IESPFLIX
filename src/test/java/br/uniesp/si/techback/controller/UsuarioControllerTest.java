@@ -21,6 +21,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(UsuarioController.class)
+@org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc(addFilters = false)
+@org.springframework.boot.test.mock.mockito.MockBean(classes = {br.uniesp.si.techback.security.JwtUtils.class, org.springframework.security.core.userdetails.UserDetailsService.class})
 @DisplayName("Testes do UsuarioController")
 class UsuarioControllerTest {
 
