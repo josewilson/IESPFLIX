@@ -621,16 +621,48 @@ FeriadoController  →  retorna HTTP 200 + lista JSON
 
 ### Executando
 
+A aplicação usa **PostgreSQL** (migrações Flyway) e exige **`JWT_SECRET`** (mínimo 32 caracteres, nunca versionar).
+
 ```bash
 # 1. Clonar o repositório
 git clone https://github.com/josewilson/IESPFLIX.git
 cd IESPFLIX
 
-# 2. Compilar e executar
-./mvnw spring-boot:run
+# 2a. Tudo no Docker (Postgres + aplicação)
+JWT_SECRET=troque-por-um-segredo-com-32-caracteres-ou-mais docker compose up --build
+
+# 2b. Local com H2 (perfil dev, sem Docker e sem Flyway)
+./mvnw spring-boot:run -Dspring-boot.run.profiles=dev
 ```
 
-A aplicação sobe em `http://localhost:8080`
+A aplicação sobe em `http://localhost:8080`.
+
+| Variável | Padrão | Uso |
+|----------|--------|-----|
+| `JWT_SECRET` | — (obrigatória, exceto no perfil `dev`) | assinatura dos tokens JWT |
+| `JWT_EXPIRATION_MS` | `3600000` | validade do token |
+| `DB_URL` / `DB_USER` / `DB_PASSWORD` | `jdbc:postgresql://localhost:5432/iespflix` / `iespflix` / `iespflix` | conexão PostgreSQL |
+
+### Autenticação
+
+```bash
+# cadastro (público)
+curl -X POST localhost:8080/usuarios -H 'Content-Type: application/json' \
+  -d '{"nome":"Maria","email":"maria@iespflix.com","senha":"senha12345","cpfCnpj":"52998224725"}'
+
+# login -> { "token": "...", "tipo": "Bearer", "expiraEmMs": 3600000 }
+curl -X POST localhost:8080/api/auth/login -H 'Content-Type: application/json' \
+  -d '{"email":"maria@iespflix.com","senha":"senha12345"}'
+
+# demais rotas exigem o cabeçalho
+curl localhost:8080/usuarios -H "Authorization: Bearer <token>"
+```
+
+### Testes
+
+```bash
+./mvnw verify   # testes + JaCoCo (target/site/jacoco); o teste Testcontainers precisa de Docker
+```
 
 ---
 
